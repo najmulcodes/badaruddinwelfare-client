@@ -59,7 +59,7 @@ Badar-Uddin-Bepari-Welfare-Organization
 
 ### 🌐 Frontend (Vercel)
 
-badaruddinwelfare-client.vercel.app
+https://badaruddinwelfare-client.vercel.app
 
 ### ⚙ Backend API (Render)
 
