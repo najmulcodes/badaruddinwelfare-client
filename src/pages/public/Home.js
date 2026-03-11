@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Heart, Utensils, Zap, Users } from "lucide-react";
-import bannerImg from "../assets/banner.jpeg";
-import logoImg from "../assets/logo2.png";
+import bannerImg from "../../assets/banner.jpeg";
+import logoImg from "../../assets/logo2.png";
 
 const ImpactCard = ({ icon, title, desc }) => (
   <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 text-center border-t-4 border-emerald-500">

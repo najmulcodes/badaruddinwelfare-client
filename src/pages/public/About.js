@@ -1,6 +1,6 @@
 import React from "react";
 import { Heart, Target, Eye } from "lucide-react";
-import logo1 from "../assets/logo1.jpeg";
+import logo1 from "../../assets/logo1.jpeg";
 
 const members = [
   "আব্দুল করিম", "রহিমা বেগম", "শফিকুল ইসলাম", "ফাতেমা আক্তার",
