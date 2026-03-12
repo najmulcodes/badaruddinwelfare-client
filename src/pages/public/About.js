@@ -1,71 +1,177 @@
-import React from "react";
-import { Heart, Target, Eye } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import api from "../../api/axios";
 import logo1 from "../../assets/logo1.jpeg";
+import memberLogo from "../../assets/member_logo.jpeg";
 
-const members = [
-  "আব্দুল করিম", "রহিমা বেগম", "শফিকুল ইসলাম", "ফাতেমা আক্তার",
-  "হারুনুর রশিদ", "আলিয়া খাতুন", "জামাল উদ্দিন", "নাসরিন সুলতানা",
-  "কামরুল হাসান", "তানিয়া আহমেদ", "ইমরান হোসেন", "সাদিয়া চৌধুরী",
-  "মেহেদী হাসান", "নুসরাত জাহান", "রাজিব আহমেদ", "সুমাইয়া পারভীন",
-];
+// ── Local photo map ──────────────────────────────────────────────────────────
+// Maps member names to local asset photos
+// Add/edit names to match your DB exactly
+const localPhotos = {};
+const photoModules = import.meta.glob("../../assets/*.{jpg,jpeg,png}", {
+  eager: true,
+});
+Object.entries(photoModules).forEach(([path, mod]) => {
+  const filename = path.split("/").pop().replace(/\.[^.]+$/, ""); // strip extension
+  localPhotos[filename] = mod.default;
+});
 
+function getMemberPhoto(member) {
+  // Try exact name match first
+  if (member.image && member.image.startsWith("http")) return member.image;
+  // Try local asset by name
+  const match = localPhotos[member.name];
+  if (match) return match;
+  // Fallback
+  return memberLogo;
+}
+
+// ── Active Members Grid ──────────────────────────────────────────────────────
+function ActiveMembersSection() {
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get("/members/active")
+      .then((res) => setMembers(res.data))
+      .catch(() => setMembers([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (members.length === 0) {
+    return (
+      <p className="text-center text-gray-400 py-12 text-lg">
+        এই মাসে কোনো সক্রিয় সদস্য পাওয়া যায়নি।
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+      {members.map((m) => (
+        <div
+          key={m._id}
+          className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1"
+        >
+          <div className="aspect-square overflow-hidden bg-emerald-50">
+            <img
+              src={getMemberPhoto(m)}
+              alt={m.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              onError={(e) => { e.target.src = memberLogo; }}
+            />
+          </div>
+          <div className="p-3 text-center">
+            <p className="font-semibold text-gray-800 text-sm leading-snug">
+              {m.name}
+            </p>
+            <span className="inline-flex items-center gap-1 mt-1 text-xs text-emerald-600 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              সক্রিয় সদস্য
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Main About Page ──────────────────────────────────────────────────────────
 export default function About() {
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
-      {/* Header */}
-      <div className="text-center mb-14">
+    <div className="min-h-screen bg-gray-50">
+
+      {/* Hero */}
+      <div className="bg-gradient-to-br from-emerald-800 to-emerald-600 text-white py-16 px-4 text-center">
         <img
           src={logo1}
-          alt="বদর উদ্দিন বেপারী কল্যাণ সংস্থা"
-          className="w-32 h-32 rounded-full object-cover mx-auto mb-5 border-4 border-emerald-400 shadow-lg"
+          alt="Logo"
+          className="w-24 h-24 object-contain mx-auto mb-5 rounded-full border-4 border-white/30 shadow-lg"
         />
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-3">আমাদের সম্পর্কে</h1>
-        <p className="text-gray-500 max-w-2xl mx-auto">
-          বদর উদ্দিন বেপারী কল্যাণ সংস্থার যাত্রা, লক্ষ্য ও মূল্যবোধ সম্পর্কে জানুন।
+        <h1 className="text-4xl font-extrabold mb-3">বদর উদ্দিন বেপারী কল্যাণ সংস্থা</h1>
+        <p className="text-emerald-100 text-lg max-w-xl mx-auto">
+          "সেবা ও উন্নয়নই আমাদের মূল লক্ষ্য"
         </p>
       </div>
 
-      {/* Story */}
-      <section className="bg-white rounded-2xl shadow-md p-8 mb-10">
-        <h2 className="text-2xl font-bold text-emerald-700 mb-4">আমাদের গল্প</h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          ২০২৩ সালে, আমাদের পরিবারের ২০ জন সদস্য একত্রিত হয়ে সিদ্ধান্ত নেন যে আমরা একসাথে কিছু করতে পারি। প্রতি মাসে নির্দিষ্ট পরিমাণ অর্থ জমা করে আমরা একটি তহবিল গঠন করি এবং সেই তহবিল থেকে আমাদের আশেপাশের অসহায় মানুষদের সহায়তা করি।
-        </p>
-        <p className="text-gray-600 leading-relaxed">
-          গত ২৪ মাসে আমরা শীতবস্ত্র বিতরণ, খাদ্য সহায়তা, চিকিৎসা সহায়তা এবং শিক্ষাবৃত্তি প্রদান করেছি। আমাদের এই ক্ষুদ্র প্রচেষ্টা অনেক মানুষের জীবনে ইতিবাচক পরিবর্তন আনতে সক্ষম হয়েছে।
-        </p>
-      </section>
+      <div className="max-w-5xl mx-auto px-4 py-14 space-y-16">
 
-      {/* Mission, Vision, Values */}
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
-        {[
-          { icon: <Target size={32} className="text-emerald-600" />, title: "আমাদের লক্ষ্য", desc: "সমাজের দুঃস্থ ও অসহায় মানুষদের জীবনমান উন্নয়নে সহায়তা করা এবং একটি সহানুভূতিশীল সমাজ গড়ে তোলা।" },
-          { icon: <Eye size={32} className="text-emerald-600" />, title: "আমাদের দৃষ্টিভঙ্গি", desc: "এমন একটি সমাজ গড়া যেখানে প্রতিটি মানুষ তাদের মৌলিক চাহিদা পূরণ করতে সক্ষম এবং কেউ অসহায় থাকে না।" },
-          { icon: <Heart size={32} className="text-emerald-600" />, title: "আমাদের মূল্যবোধ", desc: "স্বচ্ছতা, জবাবদিহিতা, সহানুভূতি এবং নিঃস্বার্থ সেবাই আমাদের মূল চালিকাশক্তি।" },
-        ].map((item) => (
-          <div key={item.title} className="bg-white rounded-xl shadow-md p-6 text-center">
-            <div className="flex justify-center mb-3">{item.icon}</div>
-            <h3 className="font-bold text-gray-800 text-lg mb-2">{item.title}</h3>
-            <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+        {/* About text */}
+        <section className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="w-1 h-7 bg-emerald-500 rounded-full inline-block" />
+            আমাদের সম্পর্কে
+          </h2>
+          <p className="text-gray-600 leading-relaxed text-base">
+            বদর উদ্দিন বেপারী কল্যাণ সংস্থা একটি পারিবারিক সামাজিক উদ্যোগ যা সমাজের
+            সুবিধাবঞ্চিত মানুষদের পাশে দাঁড়ানোর লক্ষ্যে প্রতিষ্ঠিত হয়েছে। আমরা বিশ্বাস করি
+            যে একতা এবং পারস্পরিক সহযোগিতার মাধ্যমে আমরা একটি সুন্দর সমাজ গড়তে পারি।
+          </p>
+          <p className="text-gray-600 leading-relaxed text-base mt-3">
+            আমাদের সংগঠন প্রতি মাসে সদস্যদের স্বেচ্ছামূলক অনুদানের মাধ্যমে পরিচালিত হয়।
+            এই তহবিল দরিদ্র ও অসহায় মানুষদের চিকিৎসা, শিক্ষা এবং জরুরি সহায়তায় ব্যবহার করা হয়।
+          </p>
+        </section>
+
+        {/* Active Members */}
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <span className="w-1 h-7 bg-emerald-500 rounded-full inline-block" />
+                এই মাসের সক্রিয় সদস্য
+              </h2>
+              <p className="text-gray-500 text-sm mt-1 ml-3">
+                যারা এই মাসে অনুদান দিয়েছেন
+              </p>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-sm text-emerald-700 font-medium">লাইভ আপডেট</span>
+            </div>
           </div>
-        ))}
-      </div>
+          <ActiveMembersSection />
+        </section>
 
-      {/* Member List */}
-      <section className="bg-white rounded-2xl shadow-md p-8">
-        <h2 className="text-2xl font-bold text-emerald-700 mb-2">আমাদের সদস্য তালিকা</h2>
-        <p className="text-gray-500 text-sm mb-6">স্বচ্ছতার জন্য আমরা আমাদের সদস্যদের নাম প্রকাশ করছি।</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {members.map((name, i) => (
+        {/* Mission */}
+        <section className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              icon: "🤝",
+              title: "আমাদের লক্ষ্য",
+              text: "সমাজের সুবিধাবঞ্চিত মানুষদের জীবনমান উন্নয়নে সহায়তা করা এবং পারিবারিক বন্ধন মজবুত রাখা।",
+            },
+            {
+              icon: "💚",
+              title: "আমাদের মূল্যবোধ",
+              text: "সততা, স্বচ্ছতা এবং মানবতার প্রতি দায়বদ্ধতাই আমাদের মূল চালিকাশক্তি।",
+            },
+            {
+              icon: "🌟",
+              title: "আমাদের দৃষ্টিভঙ্গি",
+              text: "একটি সুখী, সুস্থ ও স্বাবলম্বী সমাজ গড়ার স্বপ্নে আমরা প্রতিনিয়ত কাজ করে যাচ্ছি।",
+            },
+          ].map((item) => (
             <div
-              key={i}
-              className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 text-center text-sm font-medium text-emerald-800"
+              key={item.title}
+              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition"
             >
-              {name}
+              <div className="text-4xl mb-3">{item.icon}</div>
+              <h3 className="font-bold text-gray-800 text-lg mb-2">{item.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{item.text}</p>
             </div>
           ))}
-        </div>
-      </section>
+        </section>
+
+      </div>
     </div>
   );
 }
