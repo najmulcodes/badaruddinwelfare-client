@@ -55,7 +55,7 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Auth buttons */}
+        {/* Auth buttons — Desktop */}
         <div className="hidden lg:flex items-center gap-2">
           {isLoggedIn ? (
             <>
@@ -73,12 +73,20 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <Link
-              to="/login"
-              className="px-4 py-2 bg-white text-emerald-700 rounded-lg text-sm font-semibold hover:bg-emerald-50 transition"
-            >
-              Member Login
-            </Link>
+            <>
+              <Link
+                to="/login"
+                className="px-4 py-2 bg-white text-emerald-700 rounded-lg text-sm font-semibold hover:bg-emerald-50 transition"
+              >
+                Member Login
+              </Link>
+              <Link
+                to="/register"
+                className="px-4 py-2 bg-emerald-900/60 border border-white/30 text-white rounded-lg text-sm font-semibold hover:bg-emerald-900/80 transition"
+              >
+                নিবন্ধন
+              </Link>
+            </>
           )}
         </div>
 
@@ -119,13 +127,22 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <Link
-              to="/login"
-              className="text-white px-3 py-2 font-medium"
-              onClick={() => setMenuOpen(false)}
-            >
-              Member Login
-            </Link>
+            <>
+              <Link
+                to="/login"
+                className="text-white px-3 py-2 font-medium"
+                onClick={() => setMenuOpen(false)}
+              >
+                Member Login
+              </Link>
+              <Link
+                to="/register"
+                className="text-emerald-200 px-3 py-2 font-medium"
+                onClick={() => setMenuOpen(false)}
+              >
+                নিবন্ধন করুন
+              </Link>
+            </>
           )}
         </div>
       )}

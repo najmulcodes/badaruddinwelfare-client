@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/logo2.png";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const { login, googleLogin, loading, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/portal/dashboard";
 
-  // Load Google Identity Services script
   useEffect(() => {
     if (isLoggedIn) return;
     const script = document.createElement("script");
@@ -32,13 +32,7 @@ export default function Login() {
     });
     window.google.accounts.id.renderButton(
       document.getElementById("google-btn"),
-      {
-        theme: "outline",
-        size: "large",
-        width: "100%",
-        text: "signin_with",
-        locale: "bn",
-      }
+      { theme: "outline", size: "large", width: "100%", text: "signin_with", locale: "bn" }
     );
   };
 
@@ -88,7 +82,7 @@ export default function Login() {
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* Email/password form */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">ইমেইল</label>
@@ -110,13 +104,21 @@ export default function Login() {
             <div className="relative">
               <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-10 pr-11 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-600 transition"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 

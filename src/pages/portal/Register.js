@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
-import { User, Mail, Phone, Lock, Upload } from "lucide-react";
+import { User, Mail, Phone, Lock, Upload, Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/logo2.png";
 
 export default function Register() {
@@ -12,6 +12,8 @@ export default function Register() {
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -53,7 +55,6 @@ export default function Register() {
       navigate("/login");
     } catch (err) {
       const msg = err.response?.data?.message || "নিবন্ধনে সমস্যা হয়েছে";
-      // Friendly message for duplicate email
       if (msg.includes("ইমেইল") || msg.includes("email") || msg.includes("already")) {
         toast.error("এই ইমেইল দিয়ে আগেই নিবন্ধন হয়েছে। অন্য ইমেইল ব্যবহার করুন।");
       } else {
@@ -91,7 +92,7 @@ export default function Register() {
             </label>
           </div>
 
-          {/* Name */}
+          {/* Name row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">পূর্ণ নাম *</label>
@@ -131,29 +132,69 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Password */}
+          {/* Password row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">পাসওয়ার্ড *</label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input name="password" type="password" value={form.password} onChange={handleChange} placeholder="••••••"
-                  className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="••••••"
+                  className="w-full pl-9 pr-9 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  required
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-600 transition"
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
               </div>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">নিশ্চিত করুন *</label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input name="confirm" type="password" value={form.confirm} onChange={handleChange} placeholder="••••••"
-                  className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+                <input
+                  name="confirm"
+                  type={showConfirm ? "text" : "password"}
+                  value={form.confirm}
+                  onChange={handleChange}
+                  placeholder="••••••"
+                  className={`w-full pl-9 pr-9 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                    form.confirm && form.password !== form.confirm
+                      ? "border-red-400 bg-red-50"
+                      : "border-gray-300"
+                  }`}
+                  required
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-600 transition"
+                >
+                  {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
               </div>
+              {form.confirm && form.password !== form.confirm && (
+                <p className="text-xs text-red-500 mt-1">পাসওয়ার্ড মিলছে না</p>
+              )}
             </div>
           </div>
 
-          <button type="submit" disabled={loading}
+          <button
+            type="submit"
+            disabled={loading}
             className="w-full py-3 font-bold text-white rounded-lg transition disabled:opacity-60 mt-2"
-            style={{ background: "linear-gradient(135deg, #065f46, #10b981)" }}>
+            style={{ background: "linear-gradient(135deg, #065f46, #10b981)" }}
+          >
             {loading ? "নিবন্ধন হচ্ছে..." : "নিবন্ধন করুন"}
           </button>
         </form>
