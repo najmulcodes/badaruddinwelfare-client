@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound.js";
 
 // Portal pages
 import Login from "./pages/portal/Login.js";
+import Register from "./pages/portal/Register.js";
 import Dashboard from "./pages/portal/Dashboard.js";
 import DonationLog from "./pages/portal/DonationLog.js";
 import SpendingLog from "./pages/portal/SpendingLog.js";
@@ -25,19 +26,16 @@ import HelpRequests from "./pages/portal/HelpRequests.js";
 import Messages from "./pages/portal/Messages.js";
 import AdminPanel from "./pages/portal/AdminPanel.js";
 import NewsManage from "./pages/portal/NewsManage.js";
+import ProfileUpdate from "./pages/portal/ProfileUpdate.js";
 
-// Public layout wrapper (Header + Footer)
 const PublicLayout = () => (
   <div className="flex flex-col min-h-screen">
     <Header />
-    <main className="flex-1">
-      <Outlet />
-    </main>
+    <main className="flex-1"><Outlet /></main>
     <Footer />
   </div>
 );
 
-// Portal wrapper (no header/footer — PortalLayout handles its own sidebar)
 const PortalWrapper = ({ children, adminOnly = false }) => (
   <PrivateRoute adminOnly={adminOnly}>
     <PortalLayout>{children}</PortalLayout>
@@ -49,45 +47,26 @@ const router = createBrowserRouter([
   {
     element: <PublicLayout />,
     children: [
-      { path: "/", element: <Home /> },
-      { path: "/about", element: <About /> },
-      { path: "/our-work", element: <OurWork /> },
+      { path: "/",             element: <Home /> },
+      { path: "/about",        element: <About /> },
+      { path: "/our-work",     element: <OurWork /> },
       { path: "/request-help", element: <RequestHelp /> },
-      { path: "/contact", element: <Contact /> },
-      { path: "/login", element: <Login /> },
-      { path: "*", element: <NotFound /> },
+      { path: "/contact",      element: <Contact /> },
+      { path: "/login",        element: <Login /> },
+      { path: "/register",     element: <Register /> },  // ← NEW
+      { path: "*",             element: <NotFound /> },
     ],
   },
 
-  // ── Private member portal routes ───────────────────────────────────────────
-  {
-    path: "/portal/dashboard",
-    element: <PortalWrapper><Dashboard /></PortalWrapper>,
-  },
-  {
-    path: "/portal/donations",
-    element: <PortalWrapper><DonationLog /></PortalWrapper>,
-  },
-  {
-    path: "/portal/spending",
-    element: <PortalWrapper><SpendingLog /></PortalWrapper>,
-  },
-  {
-    path: "/portal/help-requests",
-    element: <PortalWrapper><HelpRequests /></PortalWrapper>,
-  },
-  {
-    path: "/portal/messages",
-    element: <PortalWrapper><Messages /></PortalWrapper>,
-  },
-  {
-    path: "/portal/news-manage",
-    element: <PortalWrapper><NewsManage /></PortalWrapper>,
-  },
-  {
-    path: "/portal/admin",
-    element: <PortalWrapper adminOnly={true}><AdminPanel /></PortalWrapper>,
-  },
+  // ── Private portal routes ─────────────────────────────────────────────────
+  { path: "/portal/dashboard",     element: <PortalWrapper><Dashboard /></PortalWrapper> },
+  { path: "/portal/donations",     element: <PortalWrapper><DonationLog /></PortalWrapper> },
+  { path: "/portal/spending",      element: <PortalWrapper><SpendingLog /></PortalWrapper> },
+  { path: "/portal/help-requests", element: <PortalWrapper><HelpRequests /></PortalWrapper> },
+  { path: "/portal/messages",      element: <PortalWrapper><Messages /></PortalWrapper> },
+  { path: "/portal/news-manage",   element: <PortalWrapper><NewsManage /></PortalWrapper> },
+  { path: "/portal/profile",       element: <PortalWrapper><ProfileUpdate /></PortalWrapper> },  // ← NEW
+  { path: "/portal/admin",         element: <PortalWrapper adminOnly={true}><AdminPanel /></PortalWrapper> },
 ]);
 
 export default function App() {
@@ -105,7 +84,7 @@ export default function App() {
             fontWeight: 500,
           },
           success: { iconTheme: { primary: "#10b981", secondary: "#fff" } },
-          error: { iconTheme: { primary: "#ef4444", secondary: "#fff" } },
+          error:   { iconTheme: { primary: "#ef4444", secondary: "#fff" } },
         }}
       />
       <RouterProvider router={router} />

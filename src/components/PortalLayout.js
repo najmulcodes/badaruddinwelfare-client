@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   LayoutDashboard, DollarSign, TrendingDown, HelpCircle,
-  MessageSquare, Users, LogOut, Menu, Newspaper
+  MessageSquare, Users, LogOut, Menu, Newspaper, UserCircle
 } from "lucide-react";
 import memberLogo from "../assets/member_logo.jpeg";
 
@@ -12,10 +12,7 @@ export default function PortalLayout({ children }) {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const handleLogout = () => { logout(); navigate("/login"); };
 
   const links = [
     { to: "/portal/dashboard",     icon: <LayoutDashboard size={18} />, label: "Dashboard" },
@@ -24,6 +21,7 @@ export default function PortalLayout({ children }) {
     { to: "/portal/help-requests", icon: <HelpCircle size={18} />,      label: "Help Requests" },
     { to: "/portal/messages",      icon: <MessageSquare size={18} />,   label: "Messages" },
     { to: "/portal/news-manage",   icon: <Newspaper size={18} />,       label: "Manage News" },
+    { to: "/portal/profile",       icon: <UserCircle size={18} />,      label: "My Profile" },
     ...(isAdmin ? [{ to: "/portal/admin", icon: <Users size={18} />, label: "Admin Panel" }] : []),
   ];
 
@@ -36,11 +34,7 @@ export default function PortalLayout({ children }) {
 
   const Sidebar = () => (
     <aside className="w-64 bg-white shadow-lg flex flex-col min-h-screen">
-      {/* User profile section */}
-      <div
-        className="p-5 border-b"
-        style={{ background: "linear-gradient(135deg, #065f46, #10b981)" }}
-      >
+      <div className="p-5 border-b" style={{ background: "linear-gradient(135deg, #065f46, #10b981)" }}>
         <div className="flex items-center gap-3 mb-2">
           <img
             src={user?.image || memberLogo}
@@ -53,25 +47,16 @@ export default function PortalLayout({ children }) {
             <p className="text-emerald-200 text-xs truncate max-w-[130px]">{user?.email}</p>
           </div>
         </div>
-        <span
-          className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-            user?.role === "admin"
-              ? "bg-yellow-400 text-yellow-900"
-              : "bg-emerald-200 text-emerald-800"
-          }`}
-        >
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+          user?.role === "admin" ? "bg-yellow-400 text-yellow-900" : "bg-emerald-200 text-emerald-800"
+        }`}>
           {user?.role === "admin" ? "Admin" : "Member"}
         </span>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
         {links.map((l) => (
-          <NavLink
-            key={l.to}
-            to={l.to}
-            className={linkClass}
-            onClick={() => setSidebarOpen(false)}
-          >
+          <NavLink key={l.to} to={l.to} className={linkClass} onClick={() => setSidebarOpen(false)}>
             {l.icon} {l.label}
           </NavLink>
         ))}
@@ -90,12 +75,8 @@ export default function PortalLayout({ children }) {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Desktop sidebar */}
-      <div className="hidden lg:flex">
-        <Sidebar />
-      </div>
+      <div className="hidden lg:flex"><Sidebar /></div>
 
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 flex lg:hidden">
           <div className="w-64"><Sidebar /></div>
@@ -103,13 +84,9 @@ export default function PortalLayout({ children }) {
         </div>
       )}
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile top bar */}
         <div className="lg:hidden flex items-center gap-3 p-4 bg-white border-b shadow-sm">
-          <button onClick={() => setSidebarOpen(true)}>
-            <Menu size={22} />
-          </button>
+          <button onClick={() => setSidebarOpen(true)}><Menu size={22} /></button>
           <img
             src={user?.image || memberLogo}
             alt={user?.name}
