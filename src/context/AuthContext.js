@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import api from "../api/axios";
 
 const AuthContext = createContext(null);
@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
   });
   const [loading, setLoading] = useState(false);
 
+  // Email/password login
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -21,7 +22,29 @@ export function AuthProvider({ children }) {
       setUser(data);
       return { success: true };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || "Login failed" };
+      return {
+        success: false,
+        message: error.response?.data?.message || "লগইন করতে সমস্যা হয়েছে",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Google login — called after Google returns idToken
+  const googleLogin = async (idToken) => {
+    setLoading(true);
+    try {
+      const { data } = await api.post("/auth/google-login", { idToken });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Google লগইনে সমস্যা হয়েছে",
+      };
     } finally {
       setLoading(false);
     }
@@ -33,11 +56,18 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  const isAdmin = user?.role === "admin";
-  const isLoggedIn = !!user;
-
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAdmin, isLoggedIn }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        googleLogin,
+        logout,
+        isAdmin: user?.role === "admin",
+        isLoggedIn: !!user,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

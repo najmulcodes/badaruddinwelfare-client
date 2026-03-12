@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
@@ -7,10 +7,50 @@ import logo from "../../assets/logo2.png";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const { login, loading, isLoggedIn } = useAuth();
+  const { login, googleLogin, loading, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/portal/dashboard";
+
+  // Load Google Identity Services script
+  useEffect(() => {
+    if (isLoggedIn) return;
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = initGoogle;
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, [isLoggedIn]);
+
+  const initGoogle = () => {
+    if (!window.google) return;
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogleResponse,
+    });
+    window.google.accounts.id.renderButton(
+      document.getElementById("google-btn"),
+      {
+        theme: "outline",
+        size: "large",
+        width: "100%",
+        text: "signin_with",
+        locale: "bn",
+      }
+    );
+  };
+
+  const handleGoogleResponse = async (response) => {
+    const result = await googleLogin(response.credential);
+    if (result.success) {
+      toast.success("Google লগইন সফল!");
+      navigate(from, { replace: true });
+    } else {
+      toast.error(result.message);
+    }
+  };
 
   if (isLoggedIn) { navigate(from, { replace: true }); return null; }
 
@@ -27,18 +67,29 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-xl p-10 w-full max-w-md">
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-10">
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-7">
           <img src={logo} alt="Logo" className="w-16 h-16 object-contain mx-auto mb-3" />
           <h1 className="text-2xl font-extrabold text-gray-800">সদস্য লগইন</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            আপনার ইমেইল ও পাসওয়ার্ড দিয়ে প্রবেশ করুন
-          </p>
+          <p className="text-gray-500 text-sm mt-1">আপনার একাউন্টে প্রবেশ করুন</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Google Login Button */}
+        <div className="mb-5">
+          <div id="google-btn" className="flex justify-center" />
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400 font-medium">অথবা ইমেইল দিয়ে</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        {/* Email/password form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">ইমেইল</label>
             <div className="relative">
@@ -79,7 +130,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Register link */}
         <div className="mt-5 text-center space-y-2">
           <p className="text-sm text-gray-500">
             নতুন সদস্য?{" "}
@@ -87,11 +137,9 @@ export default function Login() {
               নিবন্ধন করুন
             </Link>
           </p>
-          <p>
-            <Link to="/" className="text-sm text-gray-400 hover:text-emerald-600 transition">
-              ← হোমে ফিরে যান
-            </Link>
-          </p>
+          <Link to="/" className="text-sm text-gray-400 hover:text-emerald-600 transition block">
+            ← হোমে ফিরে যান
+          </Link>
         </div>
       </div>
     </div>
