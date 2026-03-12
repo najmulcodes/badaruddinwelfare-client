@@ -25,61 +25,138 @@ function getMemberPhoto(member) {
   return memberLogo;
 }
 
-// ── Active Members Grid ──────────────────────────────────────────────────────
-function ActiveMembersSection() {
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    api
-      .get("/members/active")
-      .then((res) => setMembers(res.data))
-      .catch(() => setMembers([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center py-16">
-        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
+// ── Members Grid ─────────────────────────────────────────────────────────────
+function MembersGrid({ members, tab }) {
   if (members.length === 0) {
     return (
       <p className="text-center text-gray-400 py-12 text-lg">
-        এই মাসে কোনো সক্রিয় সদস্য পাওয়া যায়নি।
+        কোনো সদস্য পাওয়া যায়নি।
       </p>
     );
   }
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-      {members.map((m) => (
+      {members.map((m, index) => (
         <div
           key={m._id}
           className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1"
         >
-          <div className="aspect-square overflow-hidden bg-emerald-50">
+          <div className="relative aspect-square overflow-hidden bg-emerald-50">
             <img
               src={getMemberPhoto(m)}
               alt={m.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               onError={(e) => { e.target.src = memberLogo; }}
             />
+            {tab === "top" && index < 3 && (
+              <div className={`absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md text-white
+                ${index === 0 ? "bg-yellow-400" : index === 1 ? "bg-gray-400" : "bg-amber-600"}`}>
+                {index + 1}
+              </div>
+            )}
           </div>
           <div className="p-3 text-center">
             <p className="font-semibold text-gray-800 text-sm leading-snug">
               {m.name}
             </p>
-            <span className="inline-flex items-center gap-1 mt-1 text-xs text-emerald-600 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              সক্রিয় সদস্য
-            </span>
+            {tab === "active" && (
+              <span className="inline-flex items-center gap-1 mt-1 text-xs text-emerald-600 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                সক্রিয় সদস্য
+              </span>
+            )}
+            {tab === "top" && (
+              <span className="inline-flex items-center gap-1 mt-1 text-xs text-yellow-600 font-medium">
+                <span className="text-yellow-500">★</span>
+                শীর্ষ অবদানকারী
+              </span>
+            )}
+            {tab === "all" && (
+              <span className="inline-flex items-center gap-1 mt-1 text-xs text-gray-500 font-medium">
+                সদস্য
+              </span>
+            )}
+            {m.totalAmount != null && (
+              <p className="text-xs text-emerald-700 font-semibold mt-0.5">
+                ৳{m.totalAmount.toLocaleString()}
+              </p>
+            )}
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+// ── Tabbed Members Section ────────────────────────────────────────────────────
+function MembersSection() {
+  const [activeTab, setActiveTab] = useState("active");
+  const [data, setData] = useState({ active: [], top: [], all: [] });
+  const [loading, setLoading] = useState({ active: false, top: false, all: false });
+  const [loaded, setLoaded] = useState({ active: false, top: false, all: false });
+
+  const fetchTab = (tab) => {
+    if (loaded[tab]) return;
+    setLoading((prev) => ({ ...prev, [tab]: true }));
+    const endpoints = {
+      active: "/members/active",
+      top: "/members/top",
+      all: "/members",
+    };
+    api
+      .get(endpoints[tab])
+      .then((res) => setData((prev) => ({ ...prev, [tab]: res.data })))
+      .catch(() => setData((prev) => ({ ...prev, [tab]: [] })))
+      .finally(() => {
+        setLoading((prev) => ({ ...prev, [tab]: false }));
+        setLoaded((prev) => ({ ...prev, [tab]: true }));
+      });
+  };
+
+  useEffect(() => {
+    fetchTab("active");
+  }, []);
+
+  const handleTab = (tab) => {
+    setActiveTab(tab);
+    fetchTab(tab);
+  };
+
+  const tabs = [
+    { id: "active", label: "সক্রিয় সদস্য", icon: "🟢" },
+    { id: "top", label: "শীর্ষ অবদানকারী", icon: "⭐" },
+    { id: "all", label: "সকল সদস্য", icon: "👥" },
+  ];
+
+  return (
+    <div>
+      {/* Tab Bar */}
+      <div className="flex gap-2 mb-8 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-100 w-fit">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => handleTab(tab.id)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200
+              ${activeTab === tab.id
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
+          >
+            <span>{tab.icon}</span>
+            <span className="hidden sm:inline">{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {loading[activeTab] ? (
+        <div className="flex justify-center py-16">
+          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <MembersGrid members={data[activeTab]} tab={activeTab} />
+      )}
     </div>
   );
 }
@@ -121,16 +198,16 @@ export default function About() {
           </p>
         </section>
 
-        {/* Active Members */}
+        {/* Members */}
         <section>
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
                 <span className="w-1 h-7 bg-emerald-500 rounded-full inline-block" />
-                এই মাসের সক্রিয় সদস্য
+                সদস্যবৃন্দ
               </h2>
               <p className="text-gray-500 text-sm mt-1 ml-3">
-                যারা এই মাসে অনুদান দিয়েছেন
+                আমাদের সকল সদস্যদের তথ্য
               </p>
             </div>
             <div className="hidden sm:flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2">
@@ -138,7 +215,7 @@ export default function About() {
               <span className="text-sm text-emerald-700 font-medium">লাইভ আপডেট</span>
             </div>
           </div>
-          <ActiveMembersSection />
+          <MembersSection />
         </section>
 
         {/* Mission */}
