@@ -134,8 +134,8 @@ Example:
 
 | Member | Month    | Amount |
 | ------ | -------- | ------ |
-| Shuvro | Oct 2025 | 2000   |
-| Nusrat | Oct 2025 | 3000   |
+| Shariar | Oct 2025 | 2000   |
+| Ayash | Oct 2025 | 3000   |
 
 Features:
 

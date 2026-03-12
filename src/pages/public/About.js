@@ -2,27 +2,42 @@ import React from "react";
 import logo1 from "../../assets/logo1.jpeg";
 import memberLogo from "../../assets/member_logo.jpeg";
 
-// ─── Hardcoded 16 members (temporary until all register & donate) ───
-// Photos are imported from assets folder using their Bengali filenames.
-// If a photo file doesn't exist yet, it falls back to memberLogo.
+// ─── Member photo imports (files must exist in src/assets/) ───
+import photoShahriyar  from "../../assets/শাহরিয়ার.jpg";
+import photoAkbar      from "../../assets/আকবর হেসেন রিফাত.jpg";
+import photoAbuTaleb   from "../../assets/আবু তালেব.jpg";
+import photoAbuBakar   from "../../assets/আবু বকর সিদ্দিক.jpg";
+import photoAbuSayed   from "../../assets/আবু সায়েদ রিন.jpg";
+import photoAriful     from "../../assets/আরিফুল ইসলাম.jpg";
+import photoEkram      from "../../assets/একরাম হেসেন রিদয়.jpg";
+import photoOmar       from "../../assets/ওমর ফারুক.jpg";
+import photoParevej    from "../../assets/পারেভেজ.jpg";
+import photoMamunur    from "../../assets/মামুনুর রশীদ.jpg";
+import photoMezbah     from "../../assets/মেজবাহ উদ্দিন.jpg";
+import photoAlmgir     from "../../assets/মোঃ আলমগীর.jpg";
+import photoMusa       from "../../assets/মোঃ মুসা.jpg";
+import photoShamsuddin from "../../assets/মোঃ সামসুউদ্দিন.jpg";
+import photoRajib      from "../../assets/রাজীব.jpg";
+import photoShariful   from "../../assets/শরীফুল ইসলাম.jpg";
 
+// ─── 16 Members — শাহরিয়ার first ───
 const MEMBERS = [
-  { id: 1,  name: "আকবর হেসেন রিফাত",     photo: null },
-  { id: 2,  name: "মোহাম্মদ শাহিন",         photo: null },
-  { id: 3,  name: "মোহাম্মদ হাসান",          photo: null },
-  { id: 4,  name: "মোহাম্মদ আলী",            photo: null },
-  { id: 5,  name: "আবদুল করিম",              photo: null },
-  { id: 6,  name: "মোহাম্মদ রহিম",           photo: null },
-  { id: 7,  name: "আবুল কালাম",              photo: null },
-  { id: 8,  name: "মোহাম্মদ সেলিম",          photo: null },
-  { id: 9,  name: "আবদুর রহমান",             photo: null },
-  { id: 10, name: "মোহাম্মদ ইসলাম",          photo: null },
-  { id: 11, name: "মোহাম্মদ কামাল",          photo: null },
-  { id: 12, name: "আবদুল মান্নান",            photo: null },
-  { id: 13, name: "মোহাম্মদ জাহাঙ্গীর",      photo: null },
-  { id: 14, name: "আবদুল হামিদ",             photo: null },
-  { id: 15, name: "মোহাম্মদ নূর",             photo: null },
-  { id: 16, name: "আবদুল বারেক",             photo: null },
+  { id: 1,  name: "শাহরিয়ার",           photo: photoShahriyar  },
+  { id: 2,  name: "আকবর হেসেন রিফাত",   photo: photoAkbar      },
+  { id: 3,  name: "আবু তালেব",           photo: photoAbuTaleb   },
+  { id: 4,  name: "আবু বকর সিদ্দিক",     photo: photoAbuBakar   },
+  { id: 5,  name: "আবু সায়েদ রিন",       photo: photoAbuSayed   },
+  { id: 6,  name: "আরিফুল ইসলাম",        photo: photoAriful     },
+  { id: 7,  name: "একরাম হেসেন রিদয়",    photo: photoEkram      },
+  { id: 8,  name: "ওমর ফারুক",           photo: photoOmar       },
+  { id: 9,  name: "পারেভেজ",             photo: photoParevej    },
+  { id: 10, name: "মামুনুর রশীদ",         photo: photoMamunur   },
+  { id: 11, name: "মেজবাহ উদ্দিন",        photo: photoMezbah    },
+  { id: 12, name: "মোঃ আলমগীর",          photo: photoAlmgir    },
+  { id: 13, name: "মোঃ মুসা",            photo: photoMusa      },
+  { id: 14, name: "মোঃ সামসুউদ্দিন",      photo: photoShamsuddin},
+  { id: 15, name: "রাজীব",               photo: photoRajib     },
+  { id: 16, name: "শরীফুল ইসলাম",         photo: photoShariful  },
 ];
 
 export default function AboutTemp() {
