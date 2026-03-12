@@ -2,23 +2,23 @@ import React from "react";
 import logo1 from "../../assets/logo1.jpeg";
 import memberLogo from "../../assets/member_logo.jpeg";
 
-// ─── Member photo imports (files must exist in src/assets/) ───
-import photoShahriyar  from "../../assets/শাহরিয়ার.jpg";
-import photoAkbar      from "../../assets/আকবর হেসেন রিফাত.jpg";
-import photoAbuTaleb   from "../../assets/আবু তালেব.jpg";
-import photoAbuBakar   from "../../assets/আবু বকর সিদ্দিক.jpg";
-import photoAbuSayed   from "../../assets/আবু সায়েদ রিন.jpg";
-import photoAriful     from "../../assets/আরিফুল ইসলাম.jpg";
-import photoEkram      from "../../assets/একরাম হেসেন রিদয়.jpg";
-import photoOmar       from "../../assets/ওমর ফারুক.jpg";
-import photoParevej    from "../../assets/পারেভেজ.jpg";
-import photoMamunur    from "../../assets/মামুনুর রশীদ.jpg";
-import photoMezbah     from "../../assets/মেজবাহ উদ্দিন.jpg";
-import photoAlmgir     from "../../assets/মোঃ আলমগীর.jpg";
-import photoMusa       from "../../assets/মোঃ মুসা.jpg";
-import photoShamsuddin from "../../assets/মোঃ সামসুউদ্দিন.jpg";
-import photoRajib      from "../../assets/রাজীব.jpg";
-import photoShariful   from "../../assets/শরীফুল ইসলাম.jpg";
+// ─── Member photo imports ───
+import photoShahriyar  from "../../assets/shahriyar.jpg";
+import photoAkbar      from "../../assets/akbar.jpg";
+import photoAbuTaleb   from "../../assets/abu_taleb.jpg";
+import photoAbuBakar   from "../../assets/abu_bakar.jpg";
+import photoAbuSayed   from "../../assets/abu_sayed.jpg";
+import photoAriful     from "../../assets/ariful.jpg";
+import photoEkram      from "../../assets/ekram.jpg";
+import photoOmar       from "../../assets/omar.jpg";
+import photoParevej    from "../../assets/parevej.jpg";
+import photoMamunur    from "../../assets/mamunur.jpg";
+import photoMezbah     from "../../assets/mezbah.jpg";
+import photoAlmgir     from "../../assets/almgir.jpg";
+import photoMusa       from "../../assets/musa.jpg";
+import photoShamsuddin from "../../assets/shamsuddin.jpg";
+import photoRajib      from "../../assets/rajib.jpg";
+import photoShariful   from "../../assets/shariful.jpg";
 
 // ─── 16 Members — শাহরিয়ার first ───
 const MEMBERS = [
