@@ -140,7 +140,7 @@ export default function Header() {
                 className="text-emerald-200 px-3 py-2 font-medium"
                 onClick={() => setMenuOpen(false)}
               >
-                নিবন্ধন করুন
+              Register
               </Link>
             </>
           )}
