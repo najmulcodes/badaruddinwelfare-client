@@ -1,21 +1,40 @@
-import React, { useEffect, useState } from "react";
+limport React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import { PageLoader } from "../../components/LoadingSpinner";
 import toast from "react-hot-toast";
-import { Plus, Trash2, Filter } from "lucide-react";
+import { Plus, Trash2, Filter, Send } from "lucide-react";
 
 const MONTHS = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
 const currentYear = new Date().getFullYear();
 
 export default function DonationLog() {
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [donations, setDonations] = useState([]);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [showAdminForm, setShowAdminForm] = useState(false);
+  const [showMemberForm, setShowMemberForm] = useState(false);
   const [filter, setFilter] = useState({ month: "", year: "" });
-  const [form, setForm] = useState({ member: "", memberName: "", amount: "", month: new Date().getMonth() + 1, year: currentYear, notes: "" });
+  const [submitting, setSubmitting] = useState(false);
+
+  // Admin form state
+  const [adminForm, setAdminForm] = useState({
+    member: "", memberName: "", amount: "",
+    month: new Date().getMonth() + 1, year: currentYear, notes: ""
+  });
+
+  // Member donation submission state
+  const [method, setMethod] = useState("bKash");
+  const [memberForm, setMemberForm] = useState({
+    amount: "",
+    month: new Date().getMonth() + 1,
+    year: currentYear,
+    bankName: "",
+    bkashNumber: "",
+    personName: "",
+    notes: "",
+  });
 
   const fetchDonations = async () => {
     try {
@@ -41,20 +60,61 @@ export default function DonationLog() {
 
   useEffect(() => { fetchDonations(); }, [filter]);
 
+  // Admin: select member
   const handleMemberSelect = (e) => {
     const m = members.find((m) => m._id === e.target.value);
-    setForm({ ...form, member: m?._id || "", memberName: m?.name || "" });
+    setAdminForm({ ...adminForm, member: m?._id || "", memberName: m?.name || "" });
   };
 
-  const handleSubmit = async (e) => {
+  // Admin: add donation
+  const handleAdminSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/donations", form);
+      await api.post("/donations", adminForm);
       toast.success("অনুদান যোগ করা হয়েছে!");
-      setShowForm(false);
-      setForm({ member: "", memberName: "", amount: "", month: new Date().getMonth() + 1, year: currentYear, notes: "" });
+      setShowAdminForm(false);
+      setAdminForm({ member: "", memberName: "", amount: "", month: new Date().getMonth() + 1, year: currentYear, notes: "" });
       fetchDonations();
     } catch (err) { toast.error(err.response?.data?.message || "সমস্যা হয়েছে"); }
+  };
+
+  // Member: submit own donation info
+  const handleMemberSubmit = async (e) => {
+    e.preventDefault();
+    if (!memberForm.amount) return toast.error("পরিমাণ লিখুন");
+    if (method === "Bank" && !memberForm.bankName) return toast.error("ব্যাংকের নাম লিখুন");
+    if (method === "bKash" && !memberForm.bkashNumber) return toast.error("bKash নম্বর লিখুন");
+    if (method === "Person" && !memberForm.personName) return toast.error("ব্যক্তির নাম লিখুন");
+
+    setSubmitting(true);
+    try {
+      // Build notes with method details
+      let methodNote = "";
+      if (method === "Bank") methodNote = `ব্যাংক: ${memberForm.bankName}`;
+      else if (method === "bKash") methodNote = `bKash: ${memberForm.bkashNumber}`;
+      else if (method === "Person") methodNote = `ব্যক্তি: ${memberForm.personName}`;
+
+      const notes = `[${method}] ${methodNote}${memberForm.notes ? ` | ${memberForm.notes}` : ""}`;
+
+      await api.post("/donations", {
+        member: user._id,
+        memberName: user.name,
+        amount: memberForm.amount,
+        month: memberForm.month,
+        year: memberForm.year,
+        notes,
+      });
+
+      toast.success("আপনার অনুদানের তথ্য জমা হয়েছে!");
+      setShowMemberForm(false);
+      setMemberForm({ amount: "", month: new Date().getMonth() + 1, year: currentYear, bankName: "", bkashNumber: "", personName: "", notes: "" });
+      setMethod("bKash");
+      fetchDonations();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "সমস্যা হয়েছে");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -77,19 +137,158 @@ export default function DonationLog() {
           <h1 className="text-2xl font-extrabold text-gray-800">অনুদান লগ</h1>
           <p className="text-gray-500 text-sm">সদস্যদের মাসিক অনুদানের তালিকা</p>
         </div>
-        {isAdmin && (
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
-          >
-            <Plus size={18} /> নতুন অনুদান
-          </button>
-        )}
+        <div className="flex gap-2 flex-wrap">
+          {/* Member: submit own donation */}
+          {!isAdmin && (
+            <button
+              onClick={() => setShowMemberForm(!showMemberForm)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              <Send size={16} /> অনুদান পাঠিয়েছি
+            </button>
+          )}
+          {/* Admin: add donation entry */}
+          {isAdmin && (
+            <button
+              onClick={() => setShowAdminForm(!showAdminForm)}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
+            >
+              <Plus size={18} /> নতুন অনুদান
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Add form */}
-      {showForm && isAdmin && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* ── Member donation submission form ── */}
+      {showMemberForm && !isAdmin && (
+        <form onSubmit={handleMemberSubmit} className="bg-white rounded-xl shadow-md p-6 mb-6 border-l-4 border-blue-500">
+          <h2 className="font-bold text-gray-800 text-lg mb-1">আপনার অনুদানের তথ্য জমা দিন</h2>
+          <p className="text-gray-400 text-xs mb-5">অ্যাডমিন এটি দেখে রেকর্ড করবেন</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Amount */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                পরিমাণ (৳) <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number" min="1"
+                value={memberForm.amount}
+                onChange={(e) => setMemberForm({ ...memberForm, amount: e.target.value })}
+                placeholder="যেমন: 500"
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            {/* Month */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">মাস</label>
+              <select
+                value={memberForm.month}
+                onChange={(e) => setMemberForm({ ...memberForm, month: Number(e.target.value) })}
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+              </select>
+            </div>
+
+            {/* Year */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">বছর</label>
+              <input
+                type="number" min="2023" max="2030"
+                value={memberForm.year}
+                onChange={(e) => setMemberForm({ ...memberForm, year: Number(e.target.value) })}
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Method */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">পাঠানোর মাধ্যম</label>
+              <select
+                value={method}
+                onChange={(e) => { setMethod(e.target.value); setMemberForm({ ...memberForm, bankName: "", bkashNumber: "", personName: "" }); }}
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="bKash">bKash</option>
+                <option value="Bank">ব্যাংক</option>
+                <option value="Person">ব্যক্তিগতভাবে</option>
+              </select>
+            </div>
+
+            {/* Conditional field */}
+            {method === "Bank" && (
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  ব্যাংকের নাম <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={memberForm.bankName}
+                  onChange={(e) => setMemberForm({ ...memberForm, bankName: e.target.value })}
+                  placeholder="যেমন: Dutch-Bangla Bank"
+                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            )}
+            {method === "bKash" && (
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  bKash নম্বর <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  value={memberForm.bkashNumber}
+                  onChange={(e) => setMemberForm({ ...memberForm, bkashNumber: e.target.value })}
+                  placeholder="01XXXXXXXXX"
+                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            )}
+            {method === "Person" && (
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  কাকে দিয়েছেন <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={memberForm.personName}
+                  onChange={(e) => setMemberForm({ ...memberForm, personName: e.target.value })}
+                  placeholder="যাকে হাতে দিয়েছেন তার নাম"
+                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            )}
+
+            {/* Extra notes */}
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">অতিরিক্ত নোট (ঐচ্ছিক)</label>
+              <input
+                type="text"
+                value={memberForm.notes}
+                onChange={(e) => setMemberForm({ ...memberForm, notes: e.target.value })}
+                placeholder="যেকোনো অতিরিক্ত তথ্য"
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 mt-5">
+            <button type="submit" disabled={submitting}
+              className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition disabled:opacity-50">
+              {submitting ? "জমা হচ্ছে..." : "জমা দিন"}
+            </button>
+            <button type="button" onClick={() => setShowMemberForm(false)}
+              className="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">বাতিল</button>
+          </div>
+        </form>
+      )}
+
+      {/* ── Admin add form ── */}
+      {showAdminForm && isAdmin && (
+        <form onSubmit={handleAdminSubmit} className="bg-white rounded-xl shadow-md p-6 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">সদস্য *</label>
             <select onChange={handleMemberSelect} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
@@ -99,25 +298,25 @@ export default function DonationLog() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">পরিমাণ (৳) *</label>
-            <input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} min="1" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+            <input type="number" value={adminForm.amount} onChange={(e) => setAdminForm({ ...adminForm, amount: e.target.value })} min="1" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">মাস *</label>
-            <select value={form.month} onChange={(e) => setForm({ ...form, month: Number(e.target.value) })} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <select value={adminForm.month} onChange={(e) => setAdminForm({ ...adminForm, month: Number(e.target.value) })} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
               {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">বছর *</label>
-            <input type="number" value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })} min="2023" max="2030" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <input type="number" value={adminForm.year} onChange={(e) => setAdminForm({ ...adminForm, year: Number(e.target.value) })} min="2023" max="2030" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
           </div>
           <div className="sm:col-span-2">
             <label className="block text-sm font-semibold text-gray-700 mb-1">নোট</label>
-            <input type="text" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="ঐচ্ছিক" />
+            <input type="text" value={adminForm.notes} onChange={(e) => setAdminForm({ ...adminForm, notes: e.target.value })} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="ঐচ্ছিক" />
           </div>
           <div className="sm:col-span-2 flex gap-3">
             <button type="submit" className="px-6 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition">সংরক্ষণ করুন</button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">বাতিল</button>
+            <button type="button" onClick={() => setShowAdminForm(false)} className="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">বাতিল</button>
           </div>
         </form>
       )}
@@ -155,7 +354,7 @@ export default function DonationLog() {
                   <td className="px-4 py-3 font-medium text-gray-700">{d.memberName}</td>
                   <td className="px-4 py-3 text-gray-500">{MONTHS[d.month - 1]} {d.year}</td>
                   <td className="px-4 py-3 font-bold text-emerald-600">৳{d.amount.toLocaleString("en-IN")}</td>
-                  <td className="px-4 py-3 text-gray-400">{d.notes || "—"}</td>
+                  <td className="px-4 py-3 text-gray-400 max-w-xs truncate">{d.notes || "—"}</td>
                   {isAdmin && (
                     <td className="px-4 py-3">
                       <button onClick={() => handleDelete(d._id)} className="text-red-500 hover:text-red-700 transition"><Trash2 size={16} /></button>
