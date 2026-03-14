@@ -125,40 +125,7 @@ export default function Header() {
               {l.label}
             </NavLink>
           ))}
-          {isLoggedIn ? (
-            <>
-              <Link
-                to="/portal/dashboard"
-                className="text-white px-3 py-2 font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <button
-                onClick={() => { logout(); setMenuOpen(false); }}
-                className="text-left text-red-300 px-3 py-2 font-medium"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="text-white px-3 py-2 font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                Member Login
-              </Link>
-              <Link
-                to="/register"
-                className="text-emerald-200 px-3 py-2 font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                নিবন্ধন করুন
-              </Link>
-            </>
-          )}
+
         </div>
 
       )}
