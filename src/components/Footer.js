@@ -41,7 +41,7 @@ export default function Footer() {
               ["আমাদের সম্পর্কে", "/about"],
               ["আমাদের কাজ", "/our-work"],
               ["সাহায্যের আবেদন", "/request-help"],
-              ["নিবন্ধন", "/register"],
+              ["নিবন্ধন করুন", "/register"],
               ["যোগাযোগ", "/contact"],
             ].map(([label, to]) => (
               <li key={to}>

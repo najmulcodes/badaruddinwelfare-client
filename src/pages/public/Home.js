@@ -1,8 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Heart, Utensils, Zap, Users, ArrowRight, ChevronDown } from "lucide-react";
+<<<<<<< HEAD
 import bannerImg from "../../assets/banner.PNG";
 import logoImg from "../../assets/logo.PNG";
+=======
+import bannerImg from "../../assets/banner.png";
+import logoImg from "../../assets/logo.png";
+>>>>>>> b1e0a05d7fe7b1494e70e90e043980e0ca796367
 
 const ImpactCard = ({ icon, title, desc, delay }) => (
   <div
