@@ -45,7 +45,7 @@ function MemberDonationForm({ user, onSuccess }) {
         year: form.year,
         notes,
       });
-      toast.success("অনুদানের তথ্য পাঠানো হয়েছে! কিছুক্ষণের মধ্যে অ্যাডমিন যাচাই করবেন।");
+      toast.success("অনুদানের তথ্য পাঠানো হয়েছে! অ্যাডমিন যাচাই করবেন।");
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || "সমস্যা হয়েছে");
