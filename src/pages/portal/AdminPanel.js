@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { PageLoader } from "../../components/LoadingSpinner";
 import toast from "react-hot-toast";
@@ -9,8 +9,24 @@ import { useAuth } from "../../context/AuthContext";
 // ── Must match SUPER_ADMIN in routes/auth.js exactly ──
 const SUPER_ADMIN = "admin@shariar.com";
 
+/**
+ * getRoleMeta – returns display label and Tailwind classes for any member object.
+ *
+ * role === "superAdmin"  OR  email === SUPER_ADMIN  →  Creator  (purple)
+ * role === "admin"                                   →  Admin    (yellow)
+ * otherwise                                          →  Member   (emerald)
+ */
+function getRoleMeta(member) {
+  const isSA = member?.role === "superAdmin" || member?.email === SUPER_ADMIN;
+  if (isSA)
+    return { label: "Creator", cls: "bg-purple-100 text-purple-700", isSuperAdmin: true };
+  if (member?.role === "admin")
+    return { label: "Admin", cls: "bg-yellow-100 text-yellow-700", isSuperAdmin: false };
+  return { label: "Member", cls: "bg-emerald-100 text-emerald-700", isSuperAdmin: false };
+}
+
 export default function AdminPanel() {
-  const { logout } = useAuth();
+  const { logout, isSuperAdmin: currentUserIsSuperAdmin } = useAuth();
 
   const [members, setMembers]   = useState([]);
   const [pending, setPending]   = useState([]);
@@ -160,12 +176,17 @@ export default function AdminPanel() {
                   required={required} />
               </div>
             ))}
+
+            {/* Role selector – superAdmin option shown only to the current superAdmin */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">ভূমিকা</label>
               <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}
                 className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <option value="member">Member</option>
                 <option value="admin">Admin</option>
+                {currentUserIsSuperAdmin && (
+                  <option value="superAdmin">Super Admin</option>
+                )}
               </select>
             </div>
           </div>
@@ -209,17 +230,27 @@ export default function AdminPanel() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {members.map((m) => {
-                  const isSuperAdmin = m.email === SUPER_ADMIN;
+                  const roleMeta = getRoleMeta(m);
                   return (
                     <tr key={m._id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
+                        {/* Photo + name + role badge stacked under photo */}
                         <div className="flex items-center gap-3">
-                          <img src={m.image || memberLogo} alt={m.name}
-                            className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                            onError={(e) => { e.target.src = memberLogo; }} />
+                          <div className="flex flex-col items-center gap-1">
+                            <img
+                              src={m.image || memberLogo}
+                              alt={m.name}
+                              className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                              onError={(e) => { e.target.src = memberLogo; }}
+                            />
+                            {/* Badge shown under the photo */}
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold leading-tight ${roleMeta.cls}`}>
+                              {roleMeta.label}
+                            </span>
+                          </div>
                           <div className="flex items-center gap-1 flex-wrap">
                             <span className="font-medium text-gray-700 whitespace-nowrap">{m.name}</span>
-                            {isSuperAdmin && (
+                            {roleMeta.isSuperAdmin && (
                               <span className="inline-flex items-center gap-0.5 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">
                                 <ShieldCheck size={10} /> Creator
                               </span>
@@ -231,21 +262,15 @@ export default function AdminPanel() {
                       <td className="px-4 py-3 text-gray-500">{m.email}</td>
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.phone || "—"}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                          isSuperAdmin
-                            ? "bg-purple-100 text-purple-700"
-                            : m.role === "admin"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-emerald-100 text-emerald-700"
-                        }`}>
-                          {isSuperAdmin ? "Super Admin" : m.role}
+                        <span className={`px-2 py-1 text-xs rounded-full font-medium ${roleMeta.cls}`}>
+                          {roleMeta.label}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
                         {m.monthlyDonation ? `৳${m.monthlyDonation.toLocaleString("en-IN")}` : "—"}
                       </td>
                       <td className="px-4 py-3">
-                        {isSuperAdmin ? (
+                        {roleMeta.isSuperAdmin ? (
                           <span className="text-xs text-gray-400 italic">সুরক্ষিত</span>
                         ) : (
                           <button onClick={() => handleRemove(m._id, m.name)}

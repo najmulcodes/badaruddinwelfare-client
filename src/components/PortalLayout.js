@@ -9,12 +9,11 @@ import memberLogo from "../assets/member_logo.jpeg";
 import Header from "./Header";
 
 export default function PortalLayout({ children }) {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, isSuperAdmin, logout, getRoleBadge } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // SuperAdmin check — role === "superAdmin" OR email matches super admin
-  const isSuperAdmin = user?.role === "superAdmin" || user?.email === "admin@shariar.com";
+  // Any user with admin-level access (admin OR superAdmin)
   const hasAdminAccess = isAdmin || isSuperAdmin;
 
   const handleLogout = () => { logout(); navigate("/login"); };
@@ -38,14 +37,15 @@ export default function PortalLayout({ children }) {
         : "text-gray-600 hover:bg-emerald-50 hover:text-emerald-700"
     }`;
 
-  // Role badge label
-  const getRoleBadge = () => {
-    if (isSuperAdmin) return { label: "Super Admin", cls: "bg-purple-400 text-purple-900" };
+  // Use the shared getRoleBadge helper from AuthContext for the logged-in user.
+  // Sidebar badge colours differ from table badge colours intentionally (richer bg).
+  const getSidebarBadge = () => {
+    if (isSuperAdmin) return { label: "Creator",  cls: "bg-purple-400 text-purple-900" };
     if (user?.role === "admin") return { label: "Admin", cls: "bg-yellow-400 text-yellow-900" };
     return { label: "Member", cls: "bg-emerald-200 text-emerald-800" };
   };
 
-  const badge = getRoleBadge();
+  const badge = getSidebarBadge();
 
   const Sidebar = () => (
     <aside className="w-64 bg-white shadow-lg flex flex-col min-h-screen">
@@ -88,7 +88,7 @@ export default function PortalLayout({ children }) {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* ── Header on top of portal ── */}
+      {/* ── Header rendered at top of every portal page ── */}
       <Header />
 
       <div className="flex flex-1 overflow-hidden">

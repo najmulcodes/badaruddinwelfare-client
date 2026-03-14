@@ -8,6 +8,9 @@ import { Plus, Trash2, Filter, Send } from "lucide-react";
 const MONTHS = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
 const currentYear = new Date().getFullYear();
 
+// ─── Earliest historical year admins can enter ───
+const MIN_YEAR = 2020;
+
 // ─── Member self-report form ───
 function MemberDonationForm({ user, onSuccess }) {
   const [form, setForm] = useState({
@@ -111,8 +114,9 @@ function MemberDonationForm({ user, onSuccess }) {
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">বছর</label>
+          {/* ── min changed from 2023 → MIN_YEAR (2020) ── */}
           <input type="number" value={form.year} onChange={(e) => setForm({...form, year: Number(e.target.value)})}
-            min="2023" max="2030"
+            min={MIN_YEAR} max="2030"
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
         </div>
 
@@ -197,6 +201,12 @@ export default function DonationLog() {
 
   const total = donations.reduce((s, d) => s + d.amount, 0);
 
+  // Build year list for the filter dropdown (MIN_YEAR → current year)
+  const filterYears = Array.from(
+    { length: currentYear - MIN_YEAR + 1 },
+    (_, i) => MIN_YEAR + i
+  );
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
@@ -247,7 +257,9 @@ export default function DonationLog() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">বছর *</label>
-            <input type="number" value={form.year} onChange={(e) => setForm({...form, year: Number(e.target.value)})} min="2023" max="2030"
+            {/* ── min changed from 2023 → MIN_YEAR (2020) ── */}
+            <input type="number" value={form.year} onChange={(e) => setForm({...form, year: Number(e.target.value)})}
+              min={MIN_YEAR} max="2030"
               className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
           </div>
           <div className="sm:col-span-2">
@@ -269,10 +281,11 @@ export default function DonationLog() {
           <option value="">সব মাস</option>
           {MONTHS.map((m, i) => <option key={i} value={i+1}>{m}</option>)}
         </select>
+        {/* ── Year filter now includes MIN_YEAR → currentYear ── */}
         <select value={filter.year} onChange={(e) => setFilter({...filter, year: e.target.value})}
           className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
           <option value="">সব বছর</option>
-          {[2023,2024,2025,2026].map((y) => <option key={y} value={y}>{y}</option>)}
+          {filterYears.map((y) => <option key={y} value={y}>{y}</option>)}
         </select>
         <span className="ml-auto text-sm font-bold text-emerald-600">মোট: ৳{total.toLocaleString("en-IN")}</span>
       </div>
