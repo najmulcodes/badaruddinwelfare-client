@@ -38,7 +38,7 @@ export default function Footer() {
               ["আমাদের কাজ", "/our-work"],
               ["সাহায্যের আবেদন", "/request-help"],
               ["নিবন্ধন করুন", "/register"],
-              ["যোগাযোগ", "/contact"],
+              ["বার্তা পাঠান", "/contact"],
             ].map(([label, to]) => (
               <li key={to}>
                 <Link to={to} className="text-emerald-200 hover:text-white transition">
