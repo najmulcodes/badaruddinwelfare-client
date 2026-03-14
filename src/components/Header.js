@@ -2,150 +2,135 @@ import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Menu, X } from "lucide-react";
-import logo from "../assets/logo2.png";
+import logo from "../assets/logo.PNG";
 
 export default function Header() {
+
   const { isLoggedIn, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
-    { to: "/", label: "HOME" },
-    { to: "/about", label: "ABOUT" },
-    { to: "/our-work", label: "OUR WORK" },
-    { to: "/request-help", label: "REQUEST HELP" },
-    { to: "/contact", label: "CONTACT" },
+    { to: "/", label: "হোম" },
+    { to: "/about", label: "আমাদের সম্পর্কে" },
+    { to: "/our-work", label: "আমাদের কাজ" },
+    { to: "/request-help", label: "সাহায্যের আবেদন" },
+    { to: "/contact", label: "যোগাযোগ" },
   ];
 
   const linkClass = ({ isActive }) =>
-    `px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+    `px-3 py-2 rounded-md text-sm font-medium transition ${
       isActive
-        ? "bg-white/20 text-emerald-200 font-bold"
+        ? "bg-white/20 text-emerald-200"
         : "text-white hover:bg-white/10"
     }`;
 
   return (
-    <header
-      className="sticky top-0 z-50 shadow-md"
-      style={{ background: "linear-gradient(135deg, #065f46, #10b981)" }}
-    >
-      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between flex-wrap gap-3">
-        {/* Logo */}
+
+    <header className="sticky top-0 z-50 shadow-md bg-emerald-700">
+
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+
         <Link to="/" className="flex items-center gap-3">
+
           <img
             src={logo}
-            alt="Logo"
-            className="h-11 w-11 rounded-full object-contain bg-white p-0.5 border-2 border-white/40"
+            alt="logo"
+            className="h-10 w-10 rounded-full bg-white p-1"
           />
+
           <div>
-            <p className="text-white font-bold text-sm leading-tight">
+            <p className="text-white font-bold text-sm">
               বদর উদ্দিন বেপারী কল্যাণ সংস্থা
             </p>
+
             <p className="text-emerald-200 text-xs">
-              "সেবা ও উন্নয়নই আমাদের মূল লক্ষ্য"
+              সেবা ও উন্নয়ন’ই আমাদের মূল লক্ষ্য
             </p>
           </div>
+
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex gap-1">
+
           {navLinks.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.to === "/"} className={linkClass}>
+            <NavLink key={l.to} to={l.to} className={linkClass}>
               {l.label}
             </NavLink>
           ))}
+
         </nav>
 
-        {/* Auth buttons — Desktop */}
-        <div className="hidden lg:flex items-center gap-2">
+        <div className="hidden lg:flex gap-2">
+
           {isLoggedIn ? (
+
             <>
               <Link
                 to="/portal/dashboard"
-                className="px-4 py-2 bg-white text-emerald-700 rounded-lg text-sm font-semibold hover:bg-emerald-50 transition"
+                className="px-4 py-2 bg-white text-emerald-700 rounded-lg text-sm font-semibold"
               >
-                Dashboard
+                ড্যাশবোর্ড
               </Link>
+
               <button
                 onClick={logout}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600 transition"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm"
               >
-                Logout
+                লগআউট
               </button>
             </>
+
           ) : (
+
             <>
               <Link
                 to="/login"
-                className="px-4 py-2 bg-white text-emerald-700 rounded-lg text-sm font-semibold hover:bg-emerald-50 transition"
+                className="px-4 py-2 bg-white text-emerald-700 rounded-lg text-sm"
               >
-                Member Login
+                সদস্য লগইন
               </Link>
+
               <Link
                 to="/register"
-                className="px-4 py-2 bg-emerald-900/60 border border-white/30 text-white rounded-lg text-sm font-semibold hover:bg-emerald-900/80 transition"
+                className="px-4 py-2 border border-white text-white rounded-lg text-sm"
               >
                 নিবন্ধন
               </Link>
             </>
+
           )}
+
         </div>
 
-        {/* Mobile hamburger */}
-        <button className="lg:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
+        <button
+          className="lg:hidden text-white"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
+
       </div>
 
-      {/* Mobile menu */}
       {menuOpen && (
-        <div className="lg:hidden px-4 pb-4 flex flex-col gap-2" style={{ background: "#065f46" }}>
+
+        <div className="lg:hidden px-4 pb-4 flex flex-col gap-2 bg-emerald-700">
+
           {navLinks.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
-              end={l.to === "/"}
-              className={linkClass}
+              className="text-white px-3 py-2"
               onClick={() => setMenuOpen(false)}
             >
               {l.label}
             </NavLink>
           ))}
-          {isLoggedIn ? (
-            <>
-              <Link
-                to="/portal/dashboard"
-                className="text-white px-3 py-2 font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <button
-                onClick={() => { logout(); setMenuOpen(false); }}
-                className="text-left text-red-300 px-3 py-2 font-medium"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="text-white px-3 py-2 font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                Member Login
-              </Link>
-              <Link
-                to="/register"
-                className="text-emerald-200 px-3 py-2 font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                নিবন্ধন করুন
-              </Link>
-            </>
-          )}
+
         </div>
+
       )}
+
     </header>
+
   );
 }

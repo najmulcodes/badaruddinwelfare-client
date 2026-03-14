@@ -1,20 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import api from "../../api/axios";
 import { PageLoader } from "../../components/LoadingSpinner";
 import toast from "react-hot-toast";
-import { UserPlus, UserX, UserCheck, Camera } from "lucide-react";
+import { UserPlus, UserX, UserCheck, Camera, ShieldCheck, LogOut } from "lucide-react";
 import memberLogo from "../../assets/member_logo.jpeg";
+import { useAuth } from "../../context/AuthContext";
+
+// ── Must match SUPER_ADMIN in routes/auth.js exactly ──
+const SUPER_ADMIN = "admin@shariar.com";
 
 export default function AdminPanel() {
+  const { logout } = useAuth();
+
   const [members, setMembers]   = useState([]);
   const [pending, setPending]   = useState([]);
   const [loading, setLoading]   = useState(true);
-  const [tab, setTab]           = useState("members"); // "members" | "pending"
+  const [tab, setTab]           = useState("members");
   const [showForm, setShowForm] = useState(false);
-  const [photoFile, setPhotoFile]   = useState(null);
+  const [photoFile, setPhotoFile]       = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ name: "", fatherName: "", email: "", phone: "", password: "", role: "member", monthlyDonation: "" });
+  const [submitting, setSubmitting]     = useState(false);
+  const [form, setForm] = useState({
+    name: "", fatherName: "", email: "", phone: "",
+    password: "", role: "member", monthlyDonation: ""
+  });
 
   const fetchAll = async () => {
     const [m, p] = await Promise.all([api.get("/auth/members"), api.get("/auth/pending")]);
@@ -57,13 +66,31 @@ export default function AdminPanel() {
     } catch { toast.error("সমস্যা হয়েছে"); }
   };
 
+  const handleReject = async (id, name) => {
+    if (!window.confirm(`${name} কে বাতিল করবেন?`)) return;
+    try {
+      await api.delete(`/auth/reject/${id}`);
+      toast.success("আবেদন বাতিল করা হয়েছে");
+      fetchAll();
+    } catch { toast.error("সমস্যা হয়েছে"); }
+  };
+
   const handleRemove = async (id, name) => {
     if (!window.confirm(`${name} কে সরিয়ে দেবেন?`)) return;
     try {
       await api.delete(`/auth/members/${id}`);
       toast.success("সদস্য নিষ্ক্রিয় করা হয়েছে");
       fetchAll();
-    } catch { toast.error("সমস্যা হয়েছে"); }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "সমস্যা হয়েছে");
+    }
+  };
+
+  const handleLogout = () => {
+    if (window.confirm("লগআউট করবেন?")) {
+      logout();
+      toast.success("লগআউট সফল হয়েছে");
+    }
   };
 
   if (loading) return <PageLoader />;
@@ -76,12 +103,20 @@ export default function AdminPanel() {
           <h1 className="text-2xl font-extrabold text-gray-800">অ্যাডমিন প্যানেল</h1>
           <p className="text-gray-500 text-sm">সদস্য ব্যবস্থাপনা</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
-        >
-          <UserPlus size={18} /> নতুন সদস্য যোগ
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
+          >
+            <UserPlus size={18} /> নতুন সদস্য যোগ
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition"
+          >
+            <LogOut size={18} /> লগআউট
+          </button>
+        </div>
       </div>
 
       {/* Add member form */}
@@ -108,12 +143,12 @@ export default function AdminPanel() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { label: "পূর্ণ নাম", key: "name", type: "text", placeholder: "পূর্ণ নাম", required: true },
-              { label: "পিতার নাম", key: "fatherName", type: "text", placeholder: "পিতার নাম", required: true },
-              { label: "ইমেইল", key: "email", type: "email", placeholder: "example@email.com", required: true },
-              { label: "ফোন / WhatsApp", key: "phone", type: "tel", placeholder: "01XXXXXXXXX", required: true },
-              { label: "পাসওয়ার্ড", key: "password", type: "password", placeholder: "কমপক্ষে ৬ অক্ষর", required: true },
-              { label: "মাসিক অনুদান (৳)", key: "monthlyDonation", type: "number", placeholder: "500", required: false },
+              { label: "পূর্ণ নাম",          key: "name",           type: "text",     placeholder: "পূর্ণ নাম",        required: true },
+              { label: "পিতার নাম",           key: "fatherName",     type: "text",     placeholder: "পিতার নাম",        required: true },
+              { label: "ইমেইল",               key: "email",          type: "email",    placeholder: "example@email.com", required: true },
+              { label: "ফোন / WhatsApp",       key: "phone",          type: "tel",      placeholder: "01XXXXXXXXX",      required: true },
+              { label: "পাসওয়ার্ড",            key: "password",       type: "password", placeholder: "কমপক্ষে ৬ অক্ষর",  required: true },
+              { label: "মাসিক অনুদান (৳)",     key: "monthlyDonation",type: "number",   placeholder: "500",              required: false },
             ].map(({ label, key, type, placeholder, required }) => (
               <div key={key}>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -141,7 +176,7 @@ export default function AdminPanel() {
               {submitting ? "যোগ হচ্ছে..." : "সদস্য যোগ করুন"}
             </button>
             <button type="button" onClick={() => { setShowForm(false); setPhotoFile(null); setPhotoPreview(null); }}
-              className="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg">বাতিল</button>
+              className="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">বাতিল</button>
           </div>
         </form>
       )}
@@ -154,7 +189,9 @@ export default function AdminPanel() {
         </button>
         <button onClick={() => setTab("pending")}
           className={`px-5 py-2 rounded-lg font-semibold text-sm transition ${tab === "pending" ? "bg-amber-500 text-white" : "bg-white text-gray-600 border hover:bg-gray-50"}`}>
-          অনুমোদন বাকি {pending.length > 0 && <span className="ml-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{pending.length}</span>}
+          অনুমোদন বাকি {pending.length > 0 && (
+            <span className="ml-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{pending.length}</span>
+          )}
         </button>
       </div>
 
@@ -171,31 +208,55 @@ export default function AdminPanel() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {members.map((m) => (
-                  <tr key={m._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <img src={m.image || memberLogo} alt={m.name}
-                          className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                          onError={(e) => { e.target.src = memberLogo; }} />
-                        <span className="font-medium text-gray-700 whitespace-nowrap">{m.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.fatherName || "—"}</td>
-                    <td className="px-4 py-3 text-gray-500">{m.email}</td>
-                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.phone || "—"}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${m.role === "admin" ? "bg-yellow-100 text-yellow-700" : "bg-emerald-100 text-emerald-700"}`}>{m.role}</span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.monthlyDonation ? `৳${m.monthlyDonation.toLocaleString("en-IN")}` : "—"}</td>
-                    <td className="px-4 py-3">
-                      <button onClick={() => handleRemove(m._id, m.name)}
-                        className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-medium">
-                        <UserX size={14} /> সরিয়ে দিন
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {members.map((m) => {
+                  const isSuperAdmin = m.email === SUPER_ADMIN;
+                  return (
+                    <tr key={m._id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <img src={m.image || memberLogo} alt={m.name}
+                            className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                            onError={(e) => { e.target.src = memberLogo; }} />
+                          <div className="flex items-center gap-1 flex-wrap">
+                            <span className="font-medium text-gray-700 whitespace-nowrap">{m.name}</span>
+                            {isSuperAdmin && (
+                              <span className="inline-flex items-center gap-0.5 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">
+                                <ShieldCheck size={10} /> Creator
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.fatherName || "—"}</td>
+                      <td className="px-4 py-3 text-gray-500">{m.email}</td>
+                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.phone || "—"}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 text-xs rounded-full font-medium ${
+                          isSuperAdmin
+                            ? "bg-purple-100 text-purple-700"
+                            : m.role === "admin"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-emerald-100 text-emerald-700"
+                        }`}>
+                          {isSuperAdmin ? "Super Admin" : m.role}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                        {m.monthlyDonation ? `৳${m.monthlyDonation.toLocaleString("en-IN")}` : "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        {isSuperAdmin ? (
+                          <span className="text-xs text-gray-400 italic">সুরক্ষিত</span>
+                        ) : (
+                          <button onClick={() => handleRemove(m._id, m.name)}
+                            className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-medium transition">
+                            <UserX size={14} /> সরিয়ে দিন
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -225,7 +286,7 @@ export default function AdminPanel() {
                   className="flex items-center gap-1 px-4 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition">
                   <UserCheck size={16} /> অনুমোদন করুন
                 </button>
-                <button onClick={() => handleRemove(m._id, m.name)}
+                <button onClick={() => handleReject(m._id, m.name)}
                   className="flex items-center gap-1 px-4 py-2 bg-red-100 text-red-600 text-sm font-semibold rounded-lg hover:bg-red-200 transition">
                   <UserX size={16} /> বাতিল
                 </button>

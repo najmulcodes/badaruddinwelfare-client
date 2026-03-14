@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../api/axios";
 import memberLogo from "../../assets/member_logo.jpeg";
-import { TrendingUp, Award, Calendar, DollarSign, Edit2 } from "lucide-react";
+import { TrendingUp, Award, Calendar, DollarSign, Edit2, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const MONTHS_BN = [
@@ -14,6 +14,7 @@ export default function MemberProfile() {
   const { user } = useAuth();
   const [donations, setDonations] = useState([]);
   const [allMembers, setAllMembers] = useState([]);
+  const [membersList, setMembersList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function MemberProfile() {
     ])
       .then(([myDons, allDons, members]) => {
         setDonations(myDons.data);
+        setMembersList(members.data);
 
         // Calculate totals per member for ranking
         const totals = {};
@@ -129,6 +131,47 @@ export default function MemberProfile() {
                 <p className="text-xs text-gray-400 mt-0.5">{stat.label}</p>
               </div>
             ))}
+          </div>
+
+          {/* Active Members List — read-only */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users size={18} className="text-emerald-600" />
+                <h2 className="font-bold text-gray-800 text-lg">সক্রিয় সদস্য</h2>
+              </div>
+              <span className="text-sm text-gray-400">{membersList.length}জন</span>
+            </div>
+            {membersList.length === 0 ? (
+              <div className="py-10 text-center text-gray-400">কোনো সদস্য পাওয়া যায়নি</div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {membersList.map((m, index) => (
+                  <div key={m._id} className="px-6 py-4 flex items-center gap-4">
+                    <span className="text-sm font-bold text-gray-300 w-6 text-right">{index + 1}</span>
+                    <img
+                      src={m.image || memberLogo}
+                      alt={m.name}
+                      className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                      onError={(e) => { e.target.src = memberLogo; }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-800 truncate">{m.name}</p>
+                      {m.fatherName && (
+                        <p className="text-xs text-gray-400 truncate">পিতা: {m.fatherName}</p>
+                      )}
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      m.role === "admin"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-emerald-100 text-emerald-700"
+                    }`}>
+                      {m.role === "admin" ? "Admin" : "Member"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Donation History */}
