@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { Lock, Mail, Eye, EyeOff } from "lucide-react";
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/logo.png";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });

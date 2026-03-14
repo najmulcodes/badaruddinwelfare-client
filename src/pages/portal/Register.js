@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { User, Mail, Phone, Lock, Upload, Eye, EyeOff } from "lucide-react";
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/logo.png";
 
 export default function Register() {
   const [form, setForm] = useState({
