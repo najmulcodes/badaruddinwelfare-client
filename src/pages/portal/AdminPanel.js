@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { PageLoader } from "../../components/LoadingSpinner";
 import toast from "react-hot-toast";
@@ -6,11 +6,38 @@ import { UserPlus, UserX, UserCheck, Camera, ShieldCheck, LogOut } from "lucide-
 import memberLogo from "../../assets/member_logo.jpeg";
 import { useAuth } from "../../context/AuthContext";
 
-// ── Must match SUPER_ADMIN in routes/auth.js exactly ──
-const SUPER_ADMIN = "admin@shariar.com";
+// ── Super-admin email — cannot be touched by anyone ──
+const SUPER_ADMIN_EMAIL = "admin@shariar.com";
+
+// ── Role badge helper ──
+function RoleBadge({ member }) {
+  const isSuperAdmin = member.role === "superAdmin" || member.email === SUPER_ADMIN_EMAIL;
+  if (isSuperAdmin) {
+    return (
+      <span className="inline-flex items-center gap-0.5 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">
+        <ShieldCheck size={10} /> Creator
+      </span>
+    );
+  }
+  if (member.role === "admin") {
+    return (
+      <span className="px-2 py-1 text-xs rounded-full font-medium bg-yellow-100 text-yellow-700">
+        Admin
+      </span>
+    );
+  }
+  return (
+    <span className="px-2 py-1 text-xs rounded-full font-medium bg-emerald-100 text-emerald-700">
+      Member
+    </span>
+  );
+}
 
 export default function AdminPanel() {
-  const { logout } = useAuth();
+  const { logout, user: currentUser } = useAuth();
+
+  // Current user's superAdmin status
+  const isSuperAdmin = currentUser?.role === "superAdmin" || currentUser?.email === SUPER_ADMIN_EMAIL;
 
   const [members, setMembers]   = useState([]);
   const [pending, setPending]   = useState([]);
@@ -75,7 +102,12 @@ export default function AdminPanel() {
     } catch { toast.error("সমস্যা হয়েছে"); }
   };
 
-  const handleRemove = async (id, name) => {
+  const handleRemove = async (id, name, email) => {
+    // Block removing super-admin
+    if (email === SUPER_ADMIN_EMAIL || name === "superAdmin") {
+      toast.error("এই অ্যাকাউন্টে কোনো পরিবর্তন করা যাবে না");
+      return;
+    }
     if (!window.confirm(`${name} কে সরিয়ে দেবেন?`)) return;
     try {
       await api.delete(`/auth/members/${id}`);
@@ -92,6 +124,9 @@ export default function AdminPanel() {
       toast.success("লগআউট সফল হয়েছে");
     }
   };
+
+  // Is this member the protected super-admin?
+  const isProtected = (m) => m.email === SUPER_ADMIN_EMAIL || m.role === "superAdmin";
 
   if (loading) return <PageLoader />;
 
@@ -166,6 +201,8 @@ export default function AdminPanel() {
                 className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <option value="member">Member</option>
                 <option value="admin">Admin</option>
+                {/* SuperAdmin can also create another superAdmin */}
+                {isSuperAdmin && <option value="superAdmin">Super Admin</option>}
               </select>
             </div>
           </div>
@@ -208,55 +245,43 @@ export default function AdminPanel() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {members.map((m) => {
-                  const isSuperAdmin = m.email === SUPER_ADMIN;
-                  return (
-                    <tr key={m._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
+                {members.map((m) => (
+                  <tr key={m._id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="relative flex-shrink-0">
                           <img src={m.image || memberLogo} alt={m.name}
                             className="w-9 h-9 rounded-full object-cover border border-gray-200"
                             onError={(e) => { e.target.src = memberLogo; }} />
-                          <div className="flex items-center gap-1 flex-wrap">
-                            <span className="font-medium text-gray-700 whitespace-nowrap">{m.name}</span>
-                            {isSuperAdmin && (
-                              <span className="inline-flex items-center gap-0.5 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">
-                                <ShieldCheck size={10} /> Creator
-                              </span>
-                            )}
-                          </div>
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.fatherName || "—"}</td>
-                      <td className="px-4 py-3 text-gray-500">{m.email}</td>
-                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.phone || "—"}</td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                          isSuperAdmin
-                            ? "bg-purple-100 text-purple-700"
-                            : m.role === "admin"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-emerald-100 text-emerald-700"
-                        }`}>
-                          {isSuperAdmin ? "Super Admin" : m.role}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                        {m.monthlyDonation ? `৳${m.monthlyDonation.toLocaleString("en-IN")}` : "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        {isSuperAdmin ? (
-                          <span className="text-xs text-gray-400 italic">সুরক্ষিত</span>
-                        ) : (
-                          <button onClick={() => handleRemove(m._id, m.name)}
-                            className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-medium transition">
-                            <UserX size={14} /> সরিয়ে দিন
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                        <div className="flex flex-col">
+                          <span className="font-medium text-gray-700 whitespace-nowrap">{m.name}</span>
+                          {/* ✅ Role badge under the name */}
+                          <RoleBadge member={m} />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.fatherName || "—"}</td>
+                    <td className="px-4 py-3 text-gray-500">{m.email}</td>
+                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.phone || "—"}</td>
+                    <td className="px-4 py-3">
+                      <RoleBadge member={m} />
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                      {m.monthlyDonation ? `৳${m.monthlyDonation.toLocaleString("en-IN")}` : "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      {isProtected(m) ? (
+                        <span className="text-xs text-gray-400 italic">সুরক্ষিত</span>
+                      ) : (
+                        <button onClick={() => handleRemove(m._id, m.name, m.email)}
+                          className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs font-medium transition">
+                          <UserX size={14} /> সরিয়ে দিন
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

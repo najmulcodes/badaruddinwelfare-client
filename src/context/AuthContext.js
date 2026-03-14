@@ -3,6 +3,8 @@ import api from "../api/axios";
 
 const AuthContext = createContext(null);
 
+const SUPER_ADMIN_EMAIL = "admin@shariar.com";
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
@@ -31,7 +33,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Google login — called after Google returns idToken
+  // Google login
   const googleLogin = async (idToken) => {
     setLoading(true);
     try {
@@ -56,6 +58,11 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  // ── Role helpers ──
+  const isSuperAdmin = user?.role === "superAdmin" || user?.email === SUPER_ADMIN_EMAIL;
+  const isAdmin      = user?.role === "admin" || isSuperAdmin;
+  const isLoggedIn   = !!user;
+
   return (
     <AuthContext.Provider
       value={{
@@ -64,8 +71,9 @@ export function AuthProvider({ children }) {
         login,
         googleLogin,
         logout,
-        isAdmin: user?.role === "admin",
-        isLoggedIn: !!user,
+        isAdmin,       // true for admin + superAdmin
+        isSuperAdmin,  // true only for superAdmin
+        isLoggedIn,
       }}
     >
       {children}

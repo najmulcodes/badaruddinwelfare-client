@@ -6,11 +6,16 @@ import {
   MessageSquare, Users, LogOut, Menu, Newspaper, UserCircle, User
 } from "lucide-react";
 import memberLogo from "../assets/member_logo.jpeg";
+import Header from "./Header";
 
 export default function PortalLayout({ children }) {
   const { user, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // SuperAdmin check — role === "superAdmin" OR email matches super admin
+  const isSuperAdmin = user?.role === "superAdmin" || user?.email === "admin@shariar.com";
+  const hasAdminAccess = isAdmin || isSuperAdmin;
 
   const handleLogout = () => { logout(); navigate("/login"); };
 
@@ -19,12 +24,11 @@ export default function PortalLayout({ children }) {
     { to: "/portal/donations",     icon: <DollarSign size={18} />,      label: "অনুদান লগ" },
     { to: "/portal/spending",      icon: <TrendingDown size={18} />,    label: "তহবিল ব্যয়" },
     { to: "/portal/help-requests", icon: <HelpCircle size={18} />,      label: "সাহায্যের আবেদন" },
-    // Messages — admin only
-    ...(isAdmin ? [{ to: "/portal/messages", icon: <MessageSquare size={18} />, label: "বার্তা" }] : []),
+    ...(hasAdminAccess ? [{ to: "/portal/messages", icon: <MessageSquare size={18} />, label: "বার্তা" }] : []),
     { to: "/portal/news-manage",   icon: <Newspaper size={18} />,       label: "সংবাদ" },
     { to: "/portal/my-profile",    icon: <User size={18} />,            label: "আমার প্রোফাইল" },
     { to: "/portal/profile",       icon: <UserCircle size={18} />,      label: "প্রোফাইল সম্পাদনা" },
-    ...(isAdmin ? [{ to: "/portal/admin", icon: <Users size={18} />, label: "অ্যাডমিন প্যানেল" }] : []),
+    ...(hasAdminAccess ? [{ to: "/portal/admin", icon: <Users size={18} />, label: "অ্যাডমিন প্যানেল" }] : []),
   ];
 
   const linkClass = ({ isActive }) =>
@@ -33,6 +37,15 @@ export default function PortalLayout({ children }) {
         ? "bg-emerald-600 text-white shadow"
         : "text-gray-600 hover:bg-emerald-50 hover:text-emerald-700"
     }`;
+
+  // Role badge label
+  const getRoleBadge = () => {
+    if (isSuperAdmin) return { label: "Super Admin", cls: "bg-purple-400 text-purple-900" };
+    if (user?.role === "admin") return { label: "Admin", cls: "bg-yellow-400 text-yellow-900" };
+    return { label: "Member", cls: "bg-emerald-200 text-emerald-800" };
+  };
+
+  const badge = getRoleBadge();
 
   const Sidebar = () => (
     <aside className="w-64 bg-white shadow-lg flex flex-col min-h-screen">
@@ -49,10 +62,8 @@ export default function PortalLayout({ children }) {
             <p className="text-emerald-200 text-xs truncate max-w-[130px]">{user?.email}</p>
           </div>
         </div>
-        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-          user?.role === "admin" ? "bg-yellow-400 text-yellow-900" : "bg-emerald-200 text-emerald-800"
-        }`}>
-          {user?.role === "admin" ? "Admin" : "Member"}
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${badge.cls}`}>
+          {badge.label}
         </span>
       </div>
 
@@ -76,28 +87,36 @@ export default function PortalLayout({ children }) {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <div className="hidden lg:flex"><Sidebar /></div>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* ── Header on top of portal ── */}
+      <Header />
 
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 flex lg:hidden">
-          <div className="w-64"><Sidebar /></div>
-          <div className="flex-1 bg-black/40" onClick={() => setSidebarOpen(false)} />
-        </div>
-      )}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop sidebar */}
+        <div className="hidden lg:flex"><Sidebar /></div>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="lg:hidden flex items-center gap-3 p-4 bg-white border-b shadow-sm">
-          <button onClick={() => setSidebarOpen(true)}><Menu size={22} /></button>
-          <img
-            src={user?.image || memberLogo}
-            alt={user?.name}
-            className="w-8 h-8 rounded-full object-cover border border-emerald-400"
-            onError={(e) => { e.target.src = memberLogo; }}
-          />
-          <p className="font-semibold text-emerald-700">{user?.name}</p>
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 flex lg:hidden">
+            <div className="w-64"><Sidebar /></div>
+            <div className="flex-1 bg-black/40" onClick={() => setSidebarOpen(false)} />
+          </div>
+        )}
+
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile top bar */}
+          <div className="lg:hidden flex items-center gap-3 p-4 bg-white border-b shadow-sm">
+            <button onClick={() => setSidebarOpen(true)}><Menu size={22} /></button>
+            <img
+              src={user?.image || memberLogo}
+              alt={user?.name}
+              className="w-8 h-8 rounded-full object-cover border border-emerald-400"
+              onError={(e) => { e.target.src = memberLogo; }}
+            />
+            <p className="font-semibold text-emerald-700">{user?.name}</p>
+          </div>
+          <main className="flex-1 p-4 lg:p-8 overflow-auto">{children}</main>
         </div>
-        <main className="flex-1 p-4 lg:p-8 overflow-auto">{children}</main>
       </div>
     </div>
   );
