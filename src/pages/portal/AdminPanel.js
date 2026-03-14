@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import api from "../../api/axios";
 import { PageLoader } from "../../components/LoadingSpinner";
 import toast from "react-hot-toast";
-import { UserPlus, UserX, UserCheck, Camera, ShieldCheck } from "lucide-react";
+import { UserPlus, UserX, UserCheck, Camera, ShieldCheck, LogOut } from "lucide-react";
 import memberLogo from "../../assets/member_logo.jpeg";
+import { AuthContext } from "../../context/AuthContext";
 
-// Super-admin — cannot be touched by anyone
+// ── Must match SUPER_ADMIN in routes/auth.js exactly ──
 const SUPER_ADMIN = "admin@shariar";
 
 export default function AdminPanel() {
+  const { logout } = useContext(AuthContext);
+
   const [members, setMembers]   = useState([]);
   const [pending, setPending]   = useState([]);
   const [loading, setLoading]   = useState(true);
@@ -83,6 +86,13 @@ export default function AdminPanel() {
     }
   };
 
+  const handleLogout = () => {
+    if (window.confirm("লগআউট করবেন?")) {
+      logout();
+      toast.success("লগআউট সফল হয়েছে");
+    }
+  };
+
   if (loading) return <PageLoader />;
 
   return (
@@ -93,12 +103,20 @@ export default function AdminPanel() {
           <h1 className="text-2xl font-extrabold text-gray-800">অ্যাডমিন প্যানেল</h1>
           <p className="text-gray-500 text-sm">সদস্য ব্যবস্থাপনা</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
-        >
-          <UserPlus size={18} /> নতুন সদস্য যোগ
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
+          >
+            <UserPlus size={18} /> নতুন সদস্য যোগ
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition"
+          >
+            <LogOut size={18} /> লগআউট
+          </button>
+        </div>
       </div>
 
       {/* Add member form */}
@@ -125,12 +143,12 @@ export default function AdminPanel() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { label: "পূর্ণ নাম",          key: "name",           type: "text",     placeholder: "পূর্ণ নাম",      required: true },
-              { label: "পিতার নাম",           key: "fatherName",     type: "text",     placeholder: "পিতার নাম",      required: true },
+              { label: "পূর্ণ নাম",          key: "name",           type: "text",     placeholder: "পূর্ণ নাম",        required: true },
+              { label: "পিতার নাম",           key: "fatherName",     type: "text",     placeholder: "পিতার নাম",        required: true },
               { label: "ইমেইল",               key: "email",          type: "email",    placeholder: "example@email.com", required: true },
-              { label: "ফোন / WhatsApp",       key: "phone",          type: "tel",      placeholder: "01XXXXXXXXX",    required: true },
-              { label: "পাসওয়ার্ড",            key: "password",       type: "password", placeholder: "কমপক্ষে ৬ অক্ষর", required: true },
-              { label: "মাসিক অনুদান (৳)",     key: "monthlyDonation",type: "number",   placeholder: "500",            required: false },
+              { label: "ফোন / WhatsApp",       key: "phone",          type: "tel",      placeholder: "01XXXXXXXXX",      required: true },
+              { label: "পাসওয়ার্ড",            key: "password",       type: "password", placeholder: "কমপক্ষে ৬ অক্ষর",  required: true },
+              { label: "মাসিক অনুদান (৳)",     key: "monthlyDonation",type: "number",   placeholder: "500",              required: false },
             ].map(({ label, key, type, placeholder, required }) => (
               <div key={key}>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -171,7 +189,9 @@ export default function AdminPanel() {
         </button>
         <button onClick={() => setTab("pending")}
           className={`px-5 py-2 rounded-lg font-semibold text-sm transition ${tab === "pending" ? "bg-amber-500 text-white" : "bg-white text-gray-600 border hover:bg-gray-50"}`}>
-          অনুমোদন বাকি {pending.length > 0 && <span className="ml-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{pending.length}</span>}
+          অনুমোদন বাকি {pending.length > 0 && (
+            <span className="ml-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{pending.length}</span>
+          )}
         </button>
       </div>
 
@@ -197,10 +217,10 @@ export default function AdminPanel() {
                           <img src={m.image || memberLogo} alt={m.name}
                             className="w-9 h-9 rounded-full object-cover border border-gray-200"
                             onError={(e) => { e.target.src = memberLogo; }} />
-                          <div>
+                          <div className="flex items-center gap-1 flex-wrap">
                             <span className="font-medium text-gray-700 whitespace-nowrap">{m.name}</span>
                             {isSuperAdmin && (
-                              <span className="ml-2 inline-flex items-center gap-0.5 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">
+                              <span className="inline-flex items-center gap-0.5 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">
                                 <ShieldCheck size={10} /> Creator
                               </span>
                             )}
@@ -212,9 +232,14 @@ export default function AdminPanel() {
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{m.phone || "—"}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                          isSuperAdmin ? "bg-purple-100 text-purple-700" :
-                          m.role === "admin" ? "bg-yellow-100 text-yellow-700" : "bg-emerald-100 text-emerald-700"
-                        }`}>{isSuperAdmin ? "Super Admin" : m.role}</span>
+                          isSuperAdmin
+                            ? "bg-purple-100 text-purple-700"
+                            : m.role === "admin"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-emerald-100 text-emerald-700"
+                        }`}>
+                          {isSuperAdmin ? "Super Admin" : m.role}
+                        </span>
                       </td>
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
                         {m.monthlyDonation ? `৳${m.monthlyDonation.toLocaleString("en-IN")}` : "—"}
