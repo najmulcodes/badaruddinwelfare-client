@@ -7,7 +7,7 @@ import memberLogo from "../../assets/member_logo.jpeg";
 import { AuthContext } from "../../context/AuthContext";
 
 // ── Must match SUPER_ADMIN in routes/auth.js exactly ──
-const SUPER_ADMIN = "admin@shariar";
+const SUPER_ADMIN = "admin@shariar.com";
 
 export default function AdminPanel() {
   const { logout } = useContext(AuthContext);
