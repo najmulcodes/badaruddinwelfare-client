@@ -29,7 +29,6 @@ function MemberDonationForm({ user, onSuccess }) {
     if (form.method === "bKash" && !form.bkashNumber) return toast.error("bKash নম্বর লিখুন");
     if (form.method === "Person" && !form.personName) return toast.error("ব্যক্তির নাম লিখুন");
 
-    // Build notes with method details
     let methodDetail = "";
     if (form.method === "Bank") methodDetail = `ব্যাংক: ${form.bankName}`;
     else if (form.method === "bKash") methodDetail = `bKash: ${form.bkashNumber}`;
@@ -60,7 +59,6 @@ function MemberDonationForm({ user, onSuccess }) {
       <p className="text-xs text-gray-400 mb-5">আপনি অনুদান পাঠালে এখানে বিস্তারিত জানান। অ্যাডমিন যাচাই করে রেকর্ড করবেন।</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Amount */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">পরিমাণ (৳) <span className="text-red-500">*</span></label>
           <input type="number" value={form.amount} onChange={(e) => setForm({...form, amount: e.target.value})}
@@ -68,7 +66,6 @@ function MemberDonationForm({ user, onSuccess }) {
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
         </div>
 
-        {/* Method */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">পাঠানোর মাধ্যম <span className="text-red-500">*</span></label>
           <select value={form.method} onChange={(e) => setForm({...form, method: e.target.value, bankName: "", bkashNumber: "", personName: ""})}
@@ -79,7 +76,6 @@ function MemberDonationForm({ user, onSuccess }) {
           </select>
         </div>
 
-        {/* Conditional field */}
         {form.method === "Bank" && (
           <div className="sm:col-span-2">
             <label className="block text-sm font-semibold text-gray-700 mb-1">ব্যাংকের নাম <span className="text-red-500">*</span></label>
@@ -105,7 +101,6 @@ function MemberDonationForm({ user, onSuccess }) {
           </div>
         )}
 
-        {/* Month */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">মাস</label>
           <select value={form.month} onChange={(e) => setForm({...form, month: Number(e.target.value)})}
@@ -114,7 +109,6 @@ function MemberDonationForm({ user, onSuccess }) {
           </select>
         </div>
 
-        {/* Year */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">বছর</label>
           <input type="number" value={form.year} onChange={(e) => setForm({...form, year: Number(e.target.value)})}
@@ -122,7 +116,6 @@ function MemberDonationForm({ user, onSuccess }) {
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
         </div>
 
-        {/* Extra notes */}
         <div className="sm:col-span-2">
           <label className="block text-sm font-semibold text-gray-700 mb-1">অতিরিক্ত নোট (ঐচ্ছিক)</label>
           <input type="text" value={form.notes} onChange={(e) => setForm({...form, notes: e.target.value})}
@@ -151,11 +144,11 @@ export default function DonationLog() {
   const [filter, setFilter] = useState({ month: "", year: "" });
   const [form, setForm] = useState({ member: "", memberName: "", amount: "", month: new Date().getMonth() + 1, year: currentYear, notes: "" });
 
-  const fetchDonations = async () => {
+  const fetchDonations = async (currentFilter = filter) => {
     try {
       const params = {};
-      if (filter.month) params.month = filter.month;
-      if (filter.year) params.year = filter.year;
+      if (currentFilter.month) params.month = currentFilter.month;
+      if (currentFilter.year) params.year = currentFilter.year;
       const { data } = await api.get("/donations", { params });
       setDonations(data);
     } catch { toast.error("ডেটা লোড করতে সমস্যা হয়েছে"); }
@@ -163,7 +156,7 @@ export default function DonationLog() {
 
   useEffect(() => {
     const init = async () => {
-      await fetchDonations();
+      await fetchDonations(filter);
       if (isAdmin) {
         const { data } = await api.get("/auth/members");
         setMembers(data);
@@ -171,9 +164,9 @@ export default function DonationLog() {
       setLoading(false);
     };
     init();
-  }, []);
+  }, [isAdmin]);
 
-  useEffect(() => { fetchDonations(); }, [filter]);
+  useEffect(() => { fetchDonations(filter); }, [filter]);
 
   const handleMemberSelect = (e) => {
     const m = members.find((m) => m._id === e.target.value);
@@ -187,7 +180,7 @@ export default function DonationLog() {
       toast.success("অনুদান যোগ করা হয়েছে!");
       setShowForm(false);
       setForm({ member: "", memberName: "", amount: "", month: new Date().getMonth() + 1, year: currentYear, notes: "" });
-      fetchDonations();
+      fetchDonations(filter);
     } catch (err) { toast.error(err.response?.data?.message || "সমস্যা হয়েছে"); }
   };
 
@@ -196,7 +189,7 @@ export default function DonationLog() {
     try {
       await api.delete(`/donations/${id}`);
       toast.success("মুছে ফেলা হয়েছে");
-      fetchDonations();
+      fetchDonations(filter);
     } catch { toast.error("মুছতে সমস্যা হয়েছে"); }
   };
 
@@ -212,14 +205,12 @@ export default function DonationLog() {
           <p className="text-gray-500 text-sm">সদস্যদের মাসিক অনুদানের তালিকা</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          {/* Member self-report button */}
           {!isAdmin && (
             <button onClick={() => setShowMemberForm(!showMemberForm)}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition">
               <Send size={18} /> অনুদান পাঠিয়েছি
             </button>
           )}
-          {/* Admin add button */}
           {isAdmin && (
             <button onClick={() => setShowForm(!showForm)}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition">
@@ -229,12 +220,10 @@ export default function DonationLog() {
         </div>
       </div>
 
-      {/* Member self-report form */}
       {!isAdmin && showMemberForm && (
         <MemberDonationForm user={user} onSuccess={() => { setShowMemberForm(false); fetchDonations(); }} />
       )}
 
-      {/* Admin add form */}
       {showForm && isAdmin && (
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -273,7 +262,6 @@ export default function DonationLog() {
         </form>
       )}
 
-      {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm p-4 mb-4 flex gap-4 flex-wrap items-center">
         <Filter size={16} className="text-gray-400" />
         <select value={filter.month} onChange={(e) => setFilter({...filter, month: e.target.value})}
@@ -289,7 +277,6 @@ export default function DonationLog() {
         <span className="ml-auto text-sm font-bold text-emerald-600">মোট: ৳{total.toLocaleString("en-IN")}</span>
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
