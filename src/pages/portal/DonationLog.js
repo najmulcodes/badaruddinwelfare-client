@@ -111,9 +111,8 @@ function MemberDonationForm({ user, onSuccess }) {
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">বছর</label>
-          {/* ✅ Changed min from 2023 to 2020 for historical entries */}
           <input type="number" value={form.year} onChange={(e) => setForm({...form, year: Number(e.target.value)})}
-            min="2020" max={currentYear}
+            min="2023" max="2030"
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
         </div>
 
@@ -137,21 +136,13 @@ function MemberDonationForm({ user, onSuccess }) {
 
 export default function DonationLog() {
   const { isAdmin, user } = useAuth();
-
-  // SuperAdmin check
-  const isSuperAdmin = user?.role === "superAdmin" || user?.email === "admin@shariar.com";
-  const hasAdminAccess = isAdmin || isSuperAdmin;
-
   const [donations, setDonations] = useState([]);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showMemberForm, setShowMemberForm] = useState(false);
   const [filter, setFilter] = useState({ month: "", year: "" });
-  const [form, setForm] = useState({
-    member: "", memberName: "", amount: "",
-    month: new Date().getMonth() + 1, year: currentYear, notes: ""
-  });
+  const [form, setForm] = useState({ member: "", memberName: "", amount: "", month: new Date().getMonth() + 1, year: currentYear, notes: "" });
 
   const fetchDonations = async () => {
     try {
@@ -166,7 +157,7 @@ export default function DonationLog() {
   useEffect(() => {
     const init = async () => {
       await fetchDonations();
-      if (hasAdminAccess) {
+      if (isAdmin) {
         const { data } = await api.get("/auth/members");
         setMembers(data);
       }
@@ -214,13 +205,13 @@ export default function DonationLog() {
           <p className="text-gray-500 text-sm">সদস্যদের মাসিক অনুদানের তালিকা</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          {!hasAdminAccess && (
+          {!isAdmin && (
             <button onClick={() => setShowMemberForm(!showMemberForm)}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition">
               <Send size={18} /> অনুদান রিপোর্ট করুন
             </button>
           )}
-          {hasAdminAccess && (
+          {isAdmin && (
             <button onClick={() => setShowForm(!showForm)}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition">
               <Plus size={18} /> অনুদান যোগ করুন
@@ -229,11 +220,11 @@ export default function DonationLog() {
         </div>
       </div>
 
-      {!hasAdminAccess && showMemberForm && (
+      {!isAdmin && showMemberForm && (
         <MemberDonationForm user={user} onSuccess={() => { setShowMemberForm(false); fetchDonations(); }} />
       )}
 
-      {showForm && hasAdminAccess && (
+      {showForm && isAdmin && (
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">সদস্য *</label>
@@ -256,9 +247,7 @@ export default function DonationLog() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">বছর *</label>
-            {/* ✅ min changed to 2020 — allows historical donation entries */}
-            <input type="number" value={form.year} onChange={(e) => setForm({...form, year: Number(e.target.value)})}
-              min="2020" max={currentYear + 1}
+            <input type="number" value={form.year} onChange={(e) => setForm({...form, year: Number(e.target.value)})} min="2023" max="2030"
               className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
           </div>
           <div className="sm:col-span-2">
@@ -273,7 +262,6 @@ export default function DonationLog() {
         </form>
       )}
 
-      {/* Filter bar */}
       <div className="bg-white rounded-xl shadow-sm p-4 mb-4 flex gap-4 flex-wrap items-center">
         <Filter size={16} className="text-gray-400" />
         <select value={filter.month} onChange={(e) => setFilter({...filter, month: e.target.value})}
@@ -284,13 +272,11 @@ export default function DonationLog() {
         <select value={filter.year} onChange={(e) => setFilter({...filter, year: e.target.value})}
           className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
           <option value="">সব বছর</option>
-          {/* ✅ Year list extended back to 2020 */}
-          {[2020,2021,2022,2023,2024,2025,2026].map((y) => <option key={y} value={y}>{y}</option>)}
+          {[2023,2024,2025,2026].map((y) => <option key={y} value={y}>{y}</option>)}
         </select>
         <span className="ml-auto text-sm font-bold text-emerald-600">মোট: ৳{total.toLocaleString("en-IN")}</span>
       </div>
 
-      {/* Donations table */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -300,7 +286,7 @@ export default function DonationLog() {
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">মাস / বছর</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">পরিমাণ</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">নোট</th>
-                {hasAdminAccess && <th className="text-left px-4 py-3 font-semibold text-gray-600">অ্যাকশন</th>}
+                {isAdmin && <th className="text-left px-4 py-3 font-semibold text-gray-600">অ্যাকশন</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -310,14 +296,14 @@ export default function DonationLog() {
                   <td className="px-4 py-3 text-gray-500">{MONTHS[d.month - 1]} {d.year}</td>
                   <td className="px-4 py-3 font-bold text-emerald-600">৳{d.amount.toLocaleString("en-IN")}</td>
                   <td className="px-4 py-3 text-gray-400 text-xs">{d.notes || "—"}</td>
-                  {hasAdminAccess && (
+                  {isAdmin && (
                     <td className="px-4 py-3">
                       <button onClick={() => handleDelete(d._id)} className="text-red-500 hover:text-red-700 transition"><Trash2 size={16} /></button>
                     </td>
                   )}
                 </tr>
               )) : (
-                <tr><td colSpan={hasAdminAccess ? 5 : 4} className="text-center py-10 text-gray-400">কোনো অনুদান পাওয়া যায়নি</td></tr>
+                <tr><td colSpan={isAdmin ? 5 : 4} className="text-center py-10 text-gray-400">কোনো অনুদান পাওয়া যায়নি</td></tr>
               )}
             </tbody>
           </table>

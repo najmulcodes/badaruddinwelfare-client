@@ -13,9 +13,7 @@ const STATUS_COLORS = {
 };
 
 export default function HelpRequests() {
-
   const { isAdmin } = useAuth();
-
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("");
@@ -26,18 +24,11 @@ export default function HelpRequests() {
       const params = filterStatus ? { status: filterStatus } : {};
       const { data } = await api.get("/help-requests", { params });
       setRequests(data);
-    } catch {
-      toast.error("ডেটা লোড করতে সমস্যা হয়েছে");
-    }
+    } catch { toast.error("ডেটা লোড করতে সমস্যা হয়েছে"); }
   };
 
-  useEffect(() => {
-    fetchRequests().finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    fetchRequests();
-  }, [filterStatus]);
+  useEffect(() => { fetchRequests().finally(() => setLoading(false)); }, []);
+  useEffect(() => { fetchRequests(); }, [filterStatus]);
 
   const handleStatusChange = async (id, status) => {
     try {
@@ -45,188 +36,94 @@ export default function HelpRequests() {
       toast.success("স্ট্যাটাস আপডেট হয়েছে");
       fetchRequests();
       if (selected?._id === id) setSelected({ ...selected, status });
-    } catch {
-      toast.error("সমস্যা হয়েছে");
-    }
+    } catch { toast.error("সমস্যা হয়েছে"); }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("এই আবেদন মুছে ফেলবেন?")) return;
-
     try {
       await api.delete(`/help-requests/${id}`);
       toast.success("মুছে ফেলা হয়েছে");
       setSelected(null);
       fetchRequests();
-    } catch {
-      toast.error("মুছতে সমস্যা হয়েছে");
-    }
+    } catch { toast.error("মুছতে সমস্যা হয়েছে"); }
   };
 
   if (loading) return <PageLoader />;
 
   return (
     <div>
-
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-800">
-            সাহায্যের আবেদনসমূহ
-          </h1>
-
-          <p className="text-gray-500 text-sm">
-            মানুষের কাছ থেকে আসা সাহায্যের আবেদন
-          </p>
+          <h1 className="text-2xl font-extrabold text-gray-800">সাহায্যের আবেদন</h1>
+          <p className="text-gray-500 text-sm">জনগণের কাছ থেকে আসা সাহায্যের আবেদনসমূহ</p>
         </div>
-
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
           className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
         >
           <option value="">সব স্ট্যাটাস</option>
-
-          {["New", "Under Review", "Approved", "Rejected"].map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-
+          {["New", "Under Review", "Approved", "Rejected"].map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-
+        {/* List */}
         <div className="space-y-3">
-
           {requests.length ? requests.map((r) => (
-
             <div
               key={r._id}
               onClick={() => setSelected(r)}
-              className={`bg-white rounded-xl shadow-sm p-4 cursor-pointer border-2 transition hover:shadow-md ${
-                selected?._id === r._id
-                  ? "border-emerald-500"
-                  : "border-transparent"
-              }`}
+              className={`bg-white rounded-xl shadow-sm p-4 cursor-pointer border-2 transition hover:shadow-md ${selected?._id === r._id ? "border-emerald-500" : "border-transparent"}`}
             >
-
               <div className="flex justify-between items-start">
-
                 <div>
-                  <p className="font-semibold text-gray-800">
-                    {r.fullName}
-                  </p>
-
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    {r.phone} · {r.address}
-                  </p>
+                  <p className="font-semibold text-gray-800">{r.fullName}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{r.phone} · {r.address}</p>
                 </div>
-
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_COLORS[r.status]}`}>
-                  {r.status}
-                </span>
-
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_COLORS[r.status]}`}>{r.status}</span>
               </div>
-
-              <p className="text-gray-500 text-sm mt-2 line-clamp-2">
-                {r.description}
-              </p>
-
-              <p className="text-xs text-gray-300 mt-2">
-                {new Date(r.createdAt).toLocaleDateString("bn-BD")}
-              </p>
-
+              <p className="text-gray-500 text-sm mt-2 line-clamp-2">{r.description}</p>
+              <p className="text-xs text-gray-300 mt-2">{new Date(r.createdAt).toLocaleDateString("bn-BD")}</p>
             </div>
-
           )) : (
-
-            <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-400">
-              কোনো আবেদন পাওয়া যায়নি
-            </div>
-
+            <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-400">কোনো আবেদন পাওয়া যায়নি</div>
           )}
-
         </div>
 
+        {/* Detail */}
         {selected && (
-
           <div className="bg-white rounded-xl shadow-md p-6 self-start sticky top-4">
-
             <div className="flex justify-between items-start mb-4">
-
-              <h2 className="font-bold text-gray-800 text-lg">
-                {selected.fullName}
-              </h2>
-
+              <h2 className="font-bold text-gray-800 text-lg">{selected.fullName}</h2>
               {isAdmin && (
-                <button
-                  onClick={() => handleDelete(selected._id)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 size={18}/>
-                </button>
+                <button onClick={() => handleDelete(selected._id)} className="text-red-500 hover:text-red-700"><Trash2 size={18} /></button>
               )}
-
             </div>
-
             <div className="space-y-2 text-sm text-gray-600 mb-4">
-
-              <p>
-                <strong>ফোন:</strong> {selected.phone}
-              </p>
-
-              <p>
-                <strong>ঠিকানা:</strong> {selected.address}
-              </p>
-
-              <p>
-                <strong>তারিখ:</strong>{" "}
-                {new Date(selected.createdAt).toLocaleDateString("bn-BD")}
-              </p>
-
+              <p><strong>ফোন:</strong> {selected.phone}</p>
+              <p><strong>ঠিকানা:</strong> {selected.address}</p>
+              <p><strong>তারিখ:</strong> {new Date(selected.createdAt).toLocaleDateString("bn-BD")}</p>
             </div>
-
-            <p className="text-gray-700 text-sm bg-gray-50 rounded-lg p-3 mb-4">
-              {selected.description}
-            </p>
-
+            <p className="text-gray-700 text-sm bg-gray-50 rounded-lg p-3 mb-4">{selected.description}</p>
             {selected.attachment && (
-              <a
-                href={selected.attachment}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1 text-emerald-600 text-sm hover:underline mb-4"
-              >
-                <ExternalLink size={14}/>
-                সংযুক্তি দেখুন
+              <a href={selected.attachment} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-emerald-600 text-sm hover:underline mb-4">
+                <ExternalLink size={14} /> সংযুক্তি দেখুন
               </a>
             )}
-
             <div>
-
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                স্ট্যাটাস পরিবর্তন করুন
-              </label>
-
+              <label className="block text-sm font-semibold text-gray-700 mb-1">স্ট্যাটাস পরিবর্তন করুন</label>
               <select
                 value={selected.status}
-                onChange={(e) =>
-                  handleStatusChange(selected._id, e.target.value)
-                }
+                onChange={(e) => handleStatusChange(selected._id, e.target.value)}
                 className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
-
-                {["New", "Under Review", "Approved", "Rejected"].map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-
+                {["New", "Under Review", "Approved", "Rejected"].map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
-
             </div>
-
           </div>
-
         )}
-
       </div>
     </div>
   );
