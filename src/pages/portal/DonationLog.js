@@ -44,7 +44,7 @@ function MemberDonationForm({ user, onSuccess }) {
         year: form.year,
         notes,
       });
-      toast.success("অনুদানের তথ্য পাঠানো হয়েছে! অ্যাডমিন যাচাই করবেন।");
+      toast.success("অনুদানের তথ্য পাঠানো হয়েছে!যাচাই করার পর আপডেট হবে।");
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || "সমস্যা হয়েছে");
@@ -55,8 +55,8 @@ function MemberDonationForm({ user, onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 mb-6 border-l-4 border-emerald-500">
-      <h2 className="font-bold text-gray-800 text-lg mb-1">অনুদান পাঠানোর তথ্য জমা দিন</h2>
-      <p className="text-xs text-gray-400 mb-5">আপনি অনুদান পাঠালে এখানে বিস্তারিত জানান। অ্যাডমিন যাচাই করে রেকর্ড করবেন।</p>
+      <h2 className="font-bold text-gray-800 text-lg mb-1">অনুদান জমা দিন</h2>
+      <p className="text-xs text-gray-400 mb-5">আপনি অনুদান পাঠালে এখানে বিস্তারিত জানান। অ্যাডমিন যাচাই করা হলে আপডেট হবে।</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
