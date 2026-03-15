@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { Mail, Lock, KeyRound } from "lucide-react";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo-circle.png";
 
 const STEPS = { EMAIL: 1, OTP: 2, PASSWORD: 3, DONE: 4 };
 

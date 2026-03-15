@@ -4,7 +4,7 @@ import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { User, Mail, Phone, Lock, Upload, Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/logo-circle.png";
-import RegisterOTPStep from "./RegisterOTPStep";
+import RegisterOTPStep from "./RegisterOTP";
 
 export default function Register() {
   const [form, setForm] = useState({
