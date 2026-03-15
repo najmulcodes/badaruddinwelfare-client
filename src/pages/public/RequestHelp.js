@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
-import { Send, AlertCircle, WifiOff } from "lucide-react";
+import { Send, AlertCircle } from "lucide-react";
 
 export default function RequestHelp() {
   const [form, setForm] = useState({
@@ -35,11 +35,11 @@ export default function RequestHelp() {
       });
 
       setSubmitted(true);
-      toast.success("আবেদন সফলভাবে জমা হয়েছে!");
+      toast.success("আবেদন পাঠানো হয়েছে!");
     } catch (error) {
       const msg = error.response?.data?.message;
       if (!msg || msg.includes("সার্ভার") || msg.includes("সংযোগ")) {
-        toast.error("সার্ভারের সাথে সংযোগ হচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।");
+        toast.error("সার্ভারের সঙ্গে সংযোগ হচ্ছে না। একটু পরে আবার চেষ্টা করুন।");
       } else {
         toast.error(msg);
       }
@@ -57,9 +57,9 @@ export default function RequestHelp() {
               <Send size={36} />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">আবেদন জমা হয়েছে!</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-3">আবেদন পাঠানো হয়েছে!</h2>
           <p className="text-gray-500 mb-6">
-            আপনার আবেদন আমাদের কাছে পৌঁছেছে। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।
+            আপনার আবেদন আমরা পেয়েছি। সময় হলে আপনার সঙ্গে যোগাযোগ করা হবে।
           </p>
           <button
             onClick={() => {
@@ -69,7 +69,7 @@ export default function RequestHelp() {
             }}
             className="px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition"
           >
-            নতুন আবেদন করুন
+            আবার আবেদন করুন
           </button>
         </div>
       </div>
@@ -81,14 +81,14 @@ export default function RequestHelp() {
       <div className="text-center mb-10">
         <h1 className="text-4xl font-extrabold text-gray-800 mb-3">সাহায্যের আবেদন</h1>
         <p className="text-gray-500">
-          আপনার সমস্যার বিবরণ জানান। আমরা যথাসাধ্য সহায়তা করার চেষ্টা করব।
+          আপনার সমস্যাটা লিখুন। আমরা যতটা পারি সাহায্য করার চেষ্টা করব।
         </p>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 mb-8">
         <AlertCircle size={20} className="text-amber-500 shrink-0 mt-0.5" />
         <p className="text-amber-700 text-sm">
-          এটি একটি সাহায্যের আবেদন ফর্ম। আপনার আবেদন আমাদের সদস্যরা পর্যালোচনা করবেন।
+          এটা সাহায্য চাওয়ার ফর্ম। আবেদনটি আমাদের টিম দেখে পরে জানাবে।
         </p>
       </div>
 
@@ -140,14 +140,14 @@ export default function RequestHelp() {
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">
-            সমস্যার বিবরণ <span className="text-red-500">*</span>
+            কী সমস্যা <span className="text-red-500">*</span>
           </label>
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
             rows={5}
-            placeholder="আপনার সমস্যা বিস্তারিত লিখুন..."
+            placeholder="আপনার সমস্যাটা একটু লিখুন..."
             className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
             required
           />
@@ -155,7 +155,7 @@ export default function RequestHelp() {
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">
-            সংযুক্তি (ঐচ্ছিক)
+            ছবি বা কাগজ (ইচ্ছা হলে)
           </label>
           <input
             type="file"
@@ -163,7 +163,7 @@ export default function RequestHelp() {
             onChange={(e) => setAttachment(e.target.files[0])}
             className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-medium hover:file:bg-emerald-100"
           />
-          <p className="text-xs text-gray-400 mt-1">সর্বোচ্চ ৫ MB। ছবি বা PDF।</p>
+          <p className="text-xs text-gray-400 mt-1">সর্বোচ্চ ৫ MB। ছবি বা PDF দিতে পারেন।</p>
         </div>
 
         <button
@@ -172,10 +172,10 @@ export default function RequestHelp() {
           className="w-full py-3 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {loading ? (
-            "জমা হচ্ছে..."
+            "পাঠানো হচ্ছে..."
           ) : (
             <>
-              <Send size={18} /> আবেদন জমা দিন
+              <Send size={18} /> আবেদন পাঠান
             </>
           )}
         </button>

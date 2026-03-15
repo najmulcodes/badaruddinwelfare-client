@@ -6,7 +6,7 @@ import { Camera, Save } from "lucide-react";
 import memberLogo from "../../assets/member_logo.jpeg";
 
 export default function ProfileUpdate() {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -36,11 +36,11 @@ export default function ProfileUpdate() {
     e.preventDefault();
 
     if (form.password && form.password !== form.confirmPassword) {
-      toast.error("পাসওয়ার্ড মিলছে না");
+      toast.error("পাসওয়ার্ড মিলছে না");
       return;
     }
     if (form.password && form.password.length < 6) {
-      toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে");
+      toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে");
       return;
     }
 
@@ -58,14 +58,13 @@ export default function ProfileUpdate() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Update stored user data
       const updatedUser = { ...user, ...data };
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      window.location.reload(); // refresh context
+      window.location.reload();
 
-      toast.success("প্রোফাইল সফলভাবে আপডেট হয়েছে!");
+      toast.success("প্রোফাইল বদলে গেছে!");
     } catch (err) {
-      toast.error(err.response?.data?.message || "আপডেটে সমস্যা হয়েছে");
+      toast.error(err.response?.data?.message || "আপডেট করতে সমস্যা হয়েছে");
     } finally {
       setLoading(false);
     }
@@ -74,23 +73,21 @@ export default function ProfileUpdate() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-gray-800">প্রোফাইল আপডেট</h1>
-        <p className="text-gray-500 text-sm mt-1">আপনার তথ্য ও ছবি পরিবর্তন করুন</p>
+        <h1 className="text-2xl font-extrabold text-gray-800">প্রোফাইল বদলান</h1>
+        <p className="text-gray-500 text-sm mt-1">আপনার তথ্য আর ছবি বদলাতে পারেন</p>
       </div>
 
       <div className="max-w-xl">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-md p-8 space-y-5"
-        >
-          {/* Photo */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-md p-8 space-y-5">
           <div className="flex flex-col items-center pb-5 border-b">
             <div className="relative mb-2">
               <img
                 src={photoPreview || user?.image || memberLogo}
                 alt="প্রোফাইল"
                 className="w-28 h-28 rounded-full object-cover border-4 border-emerald-300 shadow"
-                onError={(e) => { e.target.src = memberLogo; }}
+                onError={(e) => {
+                  e.target.src = memberLogo;
+                }}
               />
               <label
                 htmlFor="profile-photo"
@@ -108,14 +105,15 @@ export default function ProfileUpdate() {
             </div>
             <p className="text-xs text-gray-400">
               {photoFile ? (
-                <span className="text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">✓ নতুন ছবি নির্বাচিত</span>
+                <span className="text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+                  নতুন ছবি নেওয়া হয়েছে
+                </span>
               ) : (
-                "ছবি পরিবর্তন করতে ক্লিক করুন"
+                "ছবি বদলাতে এখানে চাপুন"
               )}
             </p>
           </div>
 
-          {/* Name */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               পূর্ণ নাম <span className="text-red-500">*</span>
@@ -130,23 +128,21 @@ export default function ProfileUpdate() {
             />
           </div>
 
-          {/* Father's Name */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
-              পিতার নাম <span className="text-red-500">*</span>
+              বাবার নাম <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               name="fatherName"
               value={form.fatherName}
               onChange={handleChange}
-              placeholder="আপনার পিতার নাম"
+              placeholder="আপনার বাবার নাম"
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               required
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               ইমেইল <span className="text-red-500">*</span>
@@ -161,7 +157,6 @@ export default function ProfileUpdate() {
             />
           </div>
 
-          {/* Phone */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               ফোন / WhatsApp নম্বর <span className="text-red-500">*</span>
@@ -177,15 +172,14 @@ export default function ProfileUpdate() {
             />
           </div>
 
-          {/* Divider */}
           <div className="border-t pt-4">
             <p className="text-xs text-gray-400 mb-3">
-              পাসওয়ার্ড পরিবর্তন করতে চাইলে নিচে লিখুন (না চাইলে খালি রাখুন)
+              পাসওয়ার্ড বদলাতে চাইলে নিচে লিখুন, না চাইলে ফাঁকা রাখুন
             </p>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  নতুন পাসওয়ার্ড
+                  নতুন পাসওয়ার্ড
                 </label>
                 <input
                   type="password"
@@ -198,14 +192,14 @@ export default function ProfileUpdate() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  পাসওয়ার্ড নিশ্চিত করুন
+                  পাসওয়ার্ড আবার লিখুন
                 </label>
                 <input
                   type="password"
                   name="confirmPassword"
                   value={form.confirmPassword}
                   onChange={handleChange}
-                  placeholder="পাসওয়ার্ড আবার লিখুন"
+                  placeholder="পাসওয়ার্ড আবার লিখুন"
                   className={`w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                     form.confirmPassword && form.password !== form.confirmPassword
                       ? "border-red-400 bg-red-50"
@@ -213,7 +207,7 @@ export default function ProfileUpdate() {
                   }`}
                 />
                 {form.confirmPassword && form.password !== form.confirmPassword && (
-                  <p className="text-xs text-red-500 mt-1">পাসওয়ার্ড মিলছে না</p>
+                  <p className="text-xs text-red-500 mt-1">পাসওয়ার্ড মিলছে না</p>
                 )}
               </div>
             </div>

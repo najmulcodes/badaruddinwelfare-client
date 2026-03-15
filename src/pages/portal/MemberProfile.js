@@ -5,6 +5,13 @@ import memberLogo from "../../assets/member_logo.jpeg";
 import { TrendingUp, Award, Calendar, DollarSign, Edit2, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const STAT_COLOR_CLASSES = {
+  emerald: "bg-emerald-50 text-emerald-600",
+  blue: "bg-blue-50 text-blue-600",
+  amber: "bg-amber-50 text-amber-600",
+  red: "bg-red-50 text-red-600",
+};
+
 const MONTHS_BN = [
   "", "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
   "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর",
@@ -124,7 +131,7 @@ export default function MemberProfile() {
                 key={stat.label}
                 className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center"
               >
-                <div className={`inline-flex p-2 rounded-xl mb-2 bg-${stat.color}-50 text-${stat.color}-600`}>
+                <div className={`inline-flex p-2 rounded-xl mb-2 ${STAT_COLOR_CLASSES[stat.color]}`}>
                   {stat.icon}
                 </div>
                 <p className="text-2xl font-extrabold text-gray-800">{stat.value}</p>
