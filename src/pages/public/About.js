@@ -1,5 +1,5 @@
 import React from "react";
-import logo1 from "../../assets/logo.png";
+import logo1 from "../../assets/logo-square.png";
 import memberLogo from "../../assets/member_logo.jpeg";
 
 // ─── Member photo imports ───

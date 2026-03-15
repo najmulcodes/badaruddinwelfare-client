@@ -3,20 +3,20 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { Lock, Mail, Eye, EyeOff } from "lucide-react";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo-circle.png";
 
 export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm]               = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const { login, googleLogin, loading, isLoggedIn } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate  = useNavigate();
+  const location  = useLocation();
   const from = location.state?.from?.pathname || "/portal/dashboard";
 
   useEffect(() => {
     if (isLoggedIn) return;
     const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
+    script.src   = "https://accounts.google.com/gsi/client";
     script.async = true;
     script.defer = true;
     script.onload = initGoogle;
@@ -28,7 +28,7 @@ export default function Login() {
     if (!window.google) return;
     window.google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleGoogleResponse,
+      callback:  handleGoogleResponse,
     });
     window.google.accounts.id.renderButton(
       document.getElementById("google-btn"),
@@ -63,6 +63,7 @@ export default function Login() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-10">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+
         {/* Header */}
         <div className="text-center mb-7">
           <img src={logo} alt="Logo" className="w-16 h-16 object-contain mx-auto mb-3" />
@@ -122,13 +123,30 @@ export default function Login() {
             </div>
           </div>
 
+          {/* Forgot password link */}
+          <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-emerald-600 hover:underline font-medium"
+            >
+              পাসওয়ার্ড ভুলে গেছেন?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3 font-bold text-white rounded-lg transition disabled:opacity-60"
             style={{ background: "linear-gradient(135deg, #065f46, #10b981)" }}
           >
-            {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                লগইন হচ্ছে...
+              </span>
+            ) : (
+              "লগইন করুন"
+            )}
           </button>
         </form>
 

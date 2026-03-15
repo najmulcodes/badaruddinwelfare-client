@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Code2 } from "lucide-react";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo-header.png";
 
 export default function Footer() {
   return (
@@ -63,7 +63,7 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-2 text-emerald-100">
               <Mail size={16} className="shrink-0" />
-              najmulhasanshahin@gmail.com
+              badaruddinwelfareorg@gmail.com
             </li>
           </ul>
         </div>

@@ -43,7 +43,7 @@ export default function Contact() {
               {[
                 { icon: <MapPin size={20} />, text: "রেলগেইট, ফাজিলপুর বাজার সংলগ্ন, ফেনী, বাংলাদেশ" },
                 { icon: <Phone size={20} />, text: "+880 1840 242 448" },
-                { icon: <Mail size={20} />, text: "info@bubwo.org" },
+                { icon: <Mail size={20} />, text: "badaruddinwelfareorg@gmail.com" },
               ].map(({ icon, text }, i) => (
                 <div key={i} className="flex items-start gap-3 text-gray-600">
                   <span className="text-emerald-500 mt-0.5">{icon}</span>
