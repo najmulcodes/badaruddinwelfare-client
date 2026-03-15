@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import { PageLoader } from "../../components/LoadingSpinner";
 import toast from "react-hot-toast";
-import { Plus, Trash2, Filter, Send } from "lucide-react";
+import { Check, Filter, Plus, Send, Trash2, X } from "lucide-react";
 
 const MONTHS = [
   "জানুয়ারি",
@@ -19,6 +19,12 @@ const MONTHS = [
   "নভেম্বর",
   "ডিসেম্বর",
 ];
+
+const STATUS_BADGES = {
+  pending: "bg-amber-100 text-amber-700",
+  approved: "bg-emerald-100 text-emerald-700",
+  rejected: "bg-red-100 text-red-700",
+};
 
 const currentYear = new Date().getFullYear();
 const MIN_YEAR = 2020;
@@ -73,7 +79,9 @@ function MemberDonationForm({ onSuccess }) {
       className="bg-white rounded-xl shadow-md p-5 sm:p-6 mb-6 border-l-4 border-emerald-500"
     >
       <h2 className="font-bold text-gray-800 text-lg mb-1">অনুদানের তথ্য দিন</h2>
-      <p className="text-xs text-gray-400 mb-5">অনুদান পাঠিয়ে থাকলে এখানে লিখুন।</p>
+      <p className="text-xs text-gray-400 mb-5">
+        অনুদানের তথ্য পাঠালে অ্যাডমিন দেখে স্ট্যাটাস দেবেন।
+      </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -218,7 +226,7 @@ export default function DonationLog() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showMemberForm, setShowMemberForm] = useState(false);
-  const [filter, setFilter] = useState({ month: "", year: "" });
+  const [filter, setFilter] = useState({ month: "", year: "", status: "" });
   const [form, setForm] = useState({
     member: "",
     memberName: "",
@@ -233,6 +241,8 @@ export default function DonationLog() {
       const params = {};
       if (filter.month) params.month = filter.month;
       if (filter.year) params.year = filter.year;
+      if (isAdmin && filter.status) params.status = filter.status;
+
       const { data } = await api.get("/donations", { params });
       setDonations(data);
     } catch {
@@ -249,12 +259,13 @@ export default function DonationLog() {
       }
       setLoading(false);
     };
+
     init();
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
     fetchDonations();
-  }, [filter]);
+  }, [filter, isAdmin]);
 
   const handleMemberSelect = (e) => {
     const member = members.find((item) => item._id === e.target.value);
@@ -292,10 +303,23 @@ export default function DonationLog() {
     }
   };
 
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      await api.patch(`/donations/${status}/${id}`);
+      toast.success("স্ট্যাটাস পরিবর্তন হয়েছে");
+      fetchDonations();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "সমস্যা হয়েছে");
+    }
+  };
+
   if (loading) return <PageLoader />;
 
   const total = donations.reduce((sum, donation) => sum + donation.amount, 0);
-  const filterYears = Array.from({ length: currentYear - MIN_YEAR + 1 }, (_, index) => MIN_YEAR + index);
+  const filterYears = Array.from(
+    { length: currentYear - MIN_YEAR + 1 },
+    (_, index) => MIN_YEAR + index
+  );
 
   return (
     <div>
@@ -448,6 +472,18 @@ export default function DonationLog() {
             </option>
           ))}
         </select>
+        {isAdmin && (
+          <select
+            value={filter.status}
+            onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+            className="w-full sm:w-auto border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">সব স্ট্যাটাস</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        )}
         <span className="w-full sm:w-auto sm:ml-auto text-sm font-bold text-emerald-600">
           মোট: ৳{total.toLocaleString("en-IN")}
         </span>
@@ -455,12 +491,13 @@ export default function DonationLog() {
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[640px]">
+          <table className="w-full text-sm min-w-[760px]">
             <thead className="bg-gray-50">
               <tr>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">সদস্যের নাম</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">মাস / বছর</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">পরিমাণ</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600">স্ট্যাটাস</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">নোট</th>
                 {isAdmin && <th className="text-left px-4 py-3 font-semibold text-gray-600">অ্যাকশন</th>}
               </tr>
@@ -476,23 +513,52 @@ export default function DonationLog() {
                     <td className="px-4 py-3 font-bold text-emerald-600">
                       ৳{donation.amount.toLocaleString("en-IN")}
                     </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
+                          STATUS_BADGES[donation.status] || STATUS_BADGES.pending
+                        }`}
+                      >
+                        {donation.status || "pending"}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-gray-400 text-xs">{donation.notes || "—"}</td>
                     {isAdmin && (
                       <td className="px-4 py-3">
-                        <button
-                          onClick={() => handleDelete(donation._id)}
-                          className="text-red-500 hover:text-red-700 transition"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {donation.status === "pending" && (
+                            <>
+                              <button
+                                onClick={() => handleStatusUpdate(donation._id, "approve")}
+                                className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition"
+                              >
+                                <Check size={14} />
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleStatusUpdate(donation._id, "reject")}
+                                className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition"
+                              >
+                                <X size={14} />
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => handleDelete(donation._id)}
+                            className="text-red-500 hover:text-red-700 transition"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     )}
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={isAdmin ? 5 : 4} className="text-center py-10 text-gray-400">
-                    কোনো অনুদান পাওয়া যায়নি
+                  <td colSpan={isAdmin ? 6 : 5} className="text-center py-10 text-gray-400">
+                    কোনো অনুদান পাওয়া যায়নি
                   </td>
                 </tr>
               )}

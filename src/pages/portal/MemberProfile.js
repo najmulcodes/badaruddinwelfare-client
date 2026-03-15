@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { TrendingUp, Award, Calendar, DollarSign, Edit2, Users } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../api/axios";
 import memberLogo from "../../assets/member_logo.jpeg";
-import { TrendingUp, Award, Calendar, DollarSign, Edit2, Users } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const STAT_COLOR_CLASSES = {
   emerald: "bg-emerald-50 text-emerald-600",
@@ -12,9 +12,26 @@ const STAT_COLOR_CLASSES = {
   red: "bg-red-50 text-red-600",
 };
 
+const DONATION_STATUS_CLASSES = {
+  pending: "bg-amber-100 text-amber-700",
+  approved: "bg-emerald-100 text-emerald-700",
+  rejected: "bg-red-100 text-red-700",
+};
+
 const MONTHS_BN = [
-  "", "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
-  "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর",
+  "",
+  "জানুয়ারি",
+  "ফেব্রুয়ারি",
+  "মার্চ",
+  "এপ্রিল",
+  "মে",
+  "জুন",
+  "জুলাই",
+  "আগস্ট",
+  "সেপ্টেম্বর",
+  "অক্টোবর",
+  "নভেম্বর",
+  "ডিসেম্বর",
 ];
 
 export default function MemberProfile() {
@@ -34,12 +51,12 @@ export default function MemberProfile() {
         setDonations(myDons.data);
         setMembersList(members.data);
 
-        // Calculate totals per member for ranking
         const totals = {};
         allDons.data.forEach((d) => {
           const id = d.member?._id || d.member;
           totals[id] = (totals[id] || 0) + d.amount;
         });
+
         const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
         setAllMembers(sorted.map(([id, total]) => ({ id, total })));
       })
@@ -47,25 +64,23 @@ export default function MemberProfile() {
       .finally(() => setLoading(false));
   }, [user._id]);
 
-  const totalDonated = donations.reduce((s, d) => s + d.amount, 0);
-  const myRank = allMembers.findIndex((m) => m.id === user._id) + 1;
+  const approvedDonations = donations.filter((d) => d.status === "approved");
+  const totalDonated = approvedDonations.reduce((sum, donation) => sum + donation.amount, 0);
+  const myRank = allMembers.findIndex((member) => member.id === user._id) + 1;
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
-  const donatedThisMonth = donations.some(
-    (d) => d.month === currentMonth && d.year === currentYear
+  const donatedThisMonth = approvedDonations.some(
+    (donation) => donation.month === currentMonth && donation.year === currentYear
   );
 
-  // Group by year
   const byYear = {};
-  donations.forEach((d) => {
-    if (!byYear[d.year]) byYear[d.year] = [];
-    byYear[d.year].push(d);
+  donations.forEach((donation) => {
+    if (!byYear[donation.year]) byYear[donation.year] = [];
+    byYear[donation.year].push(donation);
   });
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
-
-      {/* Profile Card */}
       <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
         <div className="h-24 bg-gradient-to-r from-emerald-700 to-emerald-500" />
         <div className="px-6 pb-6 -mt-12 flex flex-col sm:flex-row sm:items-end gap-4">
@@ -73,7 +88,9 @@ export default function MemberProfile() {
             src={user.image || memberLogo}
             alt={user.name}
             className="w-24 h-24 rounded-2xl border-4 border-white shadow-lg object-cover"
-            onError={(e) => { e.target.src = memberLogo; }}
+            onError={(e) => {
+              e.target.src = memberLogo;
+            }}
           />
           <div className="flex-1 pb-1">
             <div className="flex items-center justify-between flex-wrap gap-2">
@@ -93,7 +110,6 @@ export default function MemberProfile() {
         </div>
       </div>
 
-      {/* Stats */}
       {loading ? (
         <div className="flex justify-center py-10">
           <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
@@ -111,19 +127,19 @@ export default function MemberProfile() {
               {
                 icon: <Calendar size={20} />,
                 label: "মোট মাস",
-                value: donations.length,
+                value: approvedDonations.length,
                 color: "blue",
               },
               {
                 icon: <Award size={20} />,
-                label: "র‍্যাংকিং",
+                label: "র‌্যাঙ্কিং",
                 value: myRank > 0 ? `#${myRank}` : "—",
                 color: "amber",
               },
               {
                 icon: <TrendingUp size={20} />,
                 label: "এই মাস",
-                value: donatedThisMonth ? "✅ সক্রিয়" : "⏳ বাকি",
+                value: donatedThisMonth ? "সক্রিয়" : "বাকি",
                 color: donatedThisMonth ? "emerald" : "red",
               },
             ].map((stat) => (
@@ -140,40 +156,43 @@ export default function MemberProfile() {
             ))}
           </div>
 
-          {/* Active Members List — read-only */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Users size={18} className="text-emerald-600" />
-                <h2 className="font-bold text-gray-800 text-lg">সক্রিয় সদস্য</h2>
+                <h2 className="font-bold text-gray-800 text-lg">সক্রিয় সদস্য</h2>
               </div>
               <span className="text-sm text-gray-400">{membersList.length}জন</span>
             </div>
             {membersList.length === 0 ? (
-              <div className="py-10 text-center text-gray-400">কোনো সদস্য পাওয়া যায়নি</div>
+              <div className="py-10 text-center text-gray-400">কোনো সদস্য পাওয়া যায়নি</div>
             ) : (
               <div className="divide-y divide-gray-50">
-                {membersList.map((m, index) => (
-                  <div key={m._id} className="px-6 py-4 flex items-center gap-4">
+                {membersList.map((member, index) => (
+                  <div key={member._id} className="px-6 py-4 flex items-center gap-4">
                     <span className="text-sm font-bold text-gray-300 w-6 text-right">{index + 1}</span>
                     <img
-                      src={m.image || memberLogo}
-                      alt={m.name}
+                      src={member.image || memberLogo}
+                      alt={member.name}
                       className="w-10 h-10 rounded-full object-cover border border-gray-200"
-                      onError={(e) => { e.target.src = memberLogo; }}
+                      onError={(e) => {
+                        e.target.src = memberLogo;
+                      }}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-800 truncate">{m.name}</p>
-                      {m.fatherName && (
-                        <p className="text-xs text-gray-400 truncate">পিতা: {m.fatherName}</p>
+                      <p className="font-medium text-gray-800 truncate">{member.name}</p>
+                      {member.fatherName && (
+                        <p className="text-xs text-gray-400 truncate">পিতা: {member.fatherName}</p>
                       )}
                     </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      m.role === "admin"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-emerald-100 text-emerald-700"
-                    }`}>
-                      {m.role === "admin" ? "Admin" : "Member"}
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        member.role === "admin"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-emerald-100 text-emerald-700"
+                      }`}
+                    >
+                      {member.role === "admin" ? "Admin" : "Member"}
                     </span>
                   </div>
                 ))}
@@ -181,7 +200,6 @@ export default function MemberProfile() {
             )}
           </div>
 
-          {/* Donation History */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="font-bold text-gray-800 text-lg">অনুদানের ইতিহাস</h2>
@@ -189,44 +207,49 @@ export default function MemberProfile() {
             </div>
 
             {donations.length === 0 ? (
-              <div className="py-12 text-center text-gray-400">
-                এখনো কোনো অনুদানের রেকর্ড নেই
-              </div>
+              <div className="py-12 text-center text-gray-400">এখনও কোনো অনুদানের রেকর্ড নেই</div>
             ) : (
               <div className="divide-y divide-gray-50">
                 {Object.keys(byYear)
                   .sort((a, b) => b - a)
                   .map((year) => (
                     <div key={year}>
-                      {/* Year header */}
                       <div className="px-6 py-2 bg-gray-50 flex items-center justify-between">
                         <span className="text-sm font-semibold text-gray-500">{year}</span>
                         <span className="text-sm text-emerald-600 font-bold">
-                          ৳{byYear[year].reduce((s, d) => s + d.amount, 0).toLocaleString()}
+                          ৳{byYear[year].reduce((sum, donation) => sum + donation.amount, 0).toLocaleString()}
                         </span>
                       </div>
                       {byYear[year]
                         .sort((a, b) => b.month - a.month)
-                        .map((d) => (
+                        .map((donation) => (
                           <div
-                            key={d._id}
-                            className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition"
+                            key={donation._id}
+                            className="px-6 py-4 flex items-center justify-between gap-3 hover:bg-gray-50 transition"
                           >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-sm">
-                                {MONTHS_BN[d.month]?.slice(0, 3)}
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-sm shrink-0">
+                                {MONTHS_BN[donation.month]?.slice(0, 3)}
                               </div>
-                              <div>
+                              <div className="min-w-0">
                                 <p className="font-medium text-gray-800">
-                                  {MONTHS_BN[d.month]} {d.year}
+                                  {MONTHS_BN[donation.month]} {donation.year}
                                 </p>
-                                {d.notes && (
-                                  <p className="text-xs text-gray-400">{d.notes}</p>
+                                {donation.notes && (
+                                  <p className="text-xs text-gray-400 break-words">{donation.notes}</p>
                                 )}
+                                <span
+                                  className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                                    DONATION_STATUS_CLASSES[donation.status] ||
+                                    DONATION_STATUS_CLASSES.pending
+                                  }`}
+                                >
+                                  {donation.status || "pending"}
+                                </span>
                               </div>
                             </div>
-                            <span className="font-bold text-emerald-600 text-lg">
-                              ৳{d.amount.toLocaleString()}
+                            <span className="font-bold text-emerald-600 text-lg shrink-0">
+                              ৳{donation.amount.toLocaleString()}
                             </span>
                           </div>
                         ))}
