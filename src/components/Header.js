@@ -84,7 +84,7 @@ export default function Header() {
                 to="/register"
                 className="px-4 py-2 bg-emerald-900/60 border border-white/30 text-white rounded-lg text-sm font-semibold hover:bg-emerald-900/80 transition"
               >
-                নিবন্ধন
+                Register
               </Link>
             </>
           )}

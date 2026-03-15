@@ -1,48 +1,42 @@
-<!-- PREMIUM HEADER -->
+🌙 Badar Uddin Bepari Welfare Organization
+<p align="center"> <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0ea5a4,100:0f172a&height=200&section=header&text=Badar%20Uddin%20Bepari%20Welfare%20Organization&fontSize=36&fontColor=ffffff&animation=fadeIn"/> </p> <p align="center"> <b>🌍 A Family-Driven Charity Management Platform</b><br/> A modern platform designed to manage community charity with transparency and accountability. </p> <p align="center"> <img src="https://img.shields.io/badge/Frontend-React-blue?style=for-the-badge&logo=react"/> <img src="https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge&logo=node.js"/> <img src="https://img.shields.io/badge/Database-MongoDB-darkgreen?style=for-the-badge&logo=mongodb"/> <img src="https://img.shields.io/badge/API-Express-lightgrey?style=for-the-badge"/> <img src="https://img.shields.io/badge/Deployment-Vercel-black?style=for-the-badge&logo=vercel"/> </p>
+🌟 Project Overview
 
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0ea5a4,100:0f172a&height=200&section=header&text=Badar%20Uddin%20Bepari%20Welfare%20Organization&fontSize=38&fontColor=ffffff&animation=fadeIn" />
-</p>
+Badar Uddin Bepari Welfare Organization is a family-based charity initiative created to help people in need within the local community.
 
-<p align="center">
-  <b>🌍 A Modern Charity Management Platform</b><br/>
-  Helping communities through transparency, technology, and family-driven charity.
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Frontend-React-blue?style=for-the-badge&logo=react"/>
-  <img src="https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge&logo=node.js"/>
-  <img src="https://img.shields.io/badge/Database-MongoDB-darkgreen?style=for-the-badge&logo=mongodb"/>
-  <img src="https://img.shields.io/badge/Hosting-Vercel-black?style=for-the-badge&logo=vercel"/>
-  <img src="https://img.shields.io/badge/API-Express-lightgrey?style=for-the-badge"/>
-</p>
-
----
-
-# 🌟 Project Overview
-
-**Badar Uddin Bepari Welfare Organization** is a **family-run charity initiative** created to help people in need within the local community.
-
-For the past **24 months**, around **20 family members** have been contributing monthly funds to support people facing:
+For more than 24 months, around 20 family members have been contributing monthly funds to support individuals facing:
 
 • Medical emergencies
 • Food shortages
 • Financial hardship
 • Community welfare needs
 
-This platform digitalizes the charity operations by providing a **public website** and a **private member management system**.
+This platform digitizes the charity process by providing:
 
----
+• A public information website
+• A secure member portal
+• A transparent donation tracking system
 
-# 🏗 Project Architecture
+The goal is to make charity organized, transparent, and sustainable.
 
-```
+⭐ Key Highlights
+
+✔ Family-driven charity system
+✔ Transparent donation tracking
+✔ Secure authentication system (JWT)
+✔ Role-based access (Member / Admin / Super Admin)
+✔ Help request management
+✔ Community-focused platform
+✔ Bangla-first user experience
+
+🏗 Project Architecture
 Badar-Uddin-Bepari-Welfare-Organization
 │
 ├── badaruddinwelfare-client
 │   ├── React
 │   ├── Vite
 │   ├── TailwindCSS
+│   ├── React Router
 │   └── Axios
 │
 └── badaruddinwelfare-server
@@ -51,45 +45,49 @@ Badar-Uddin-Bepari-Welfare-Organization
     ├── MongoDB
     ├── JWT Authentication
     └── Cloudinary File Upload
-```
-
----
-
-# 🚀 Live Deployment
-
-### 🌐 Frontend (Vercel)
+🧠 System Workflow
+User visits website
+        ↓
+User submits Help Request
+        ↓
+Request stored in MongoDB
+        ↓
+Members review request
+        ↓
+Admin approves / rejects
+        ↓
+Charity funds distributed
+        ↓
+Donation records updated
+🚀 Live Deployment
+🌐 Frontend
 
 https://badaruddinwelfare-client.vercel.app
 
-### ⚙ Backend API (Render)
+⚙ Backend API
 
 https://badaruddinwelfare-server.onrender.com
----
 
-# 🧩 Core Features
+🧩 Core Features
+🌍 Public Website
+Home
 
-## 🌍 Public Website
+• Organization introduction
+• Charity mission statement
+• Community overview
 
-### Home Page
-
-• Hero section with mission statement
-• Charity introduction
-• Impact highlights
-• Gallery preview
-
-### About Us
+About
 
 • Organization story
-• Mission & vision
-• Member transparency list
+• Mission and vision
+• Family charity background
 
-### Our Work
+Our Work
 
-• Charity activity posts
-• Impact gallery
-• Community stories
+• Charity activities
+• Community support initiatives
 
-### Request Help
+Request Help
 
 People in need can submit assistance requests including:
 
@@ -97,84 +95,71 @@ People in need can submit assistance requests including:
 • Phone number
 • Address
 • Description of situation
-• Supporting documents
 
-### Contact / Suggestion
+Contact
 
-Visitors can submit feedback or suggestions.
+Visitors can submit:
 
----
+• Suggestions
+• Messages
+• Feedback
 
-# 🔐 Private Member Portal
+🔐 Private Member Portal
 
 Accessible only by authorized members.
 
-## Member Login
+👤 Authentication
 
-Secure authentication system using **JWT**.
+• Secure login system
+• JWT based authentication
+• Protected routes
 
----
+Roles include:
 
-## 📊 Dashboard
+• Member
+• Admin
+• Super Admin
 
-Displays key statistics:
+Super Admin has full system permissions.
 
-• Total Funds Available
-• Total Donations Collected
-• Total Amount Spent
-• Recent activities
+📊 Dashboard
 
----
+Members can view:
 
-## 💰 Donation Log
+• Total donations collected
+• Total money spent
+• Current available funds
+• System overview
 
-Track monthly member contributions.
+💰 Donation Log
+
+Track monthly contributions from members.
 
 Example:
 
-| Member | Month    | Amount |
-| ------ | -------- | ------ |
-| Shariar | Oct 2025 | 2000   |
-| Ayash | Oct 2025 | 3000   |
+Member	Month	Amount
+Shariar	Oct 2025	2000
+Ayash	Oct 2025	3000
 
 Features:
 
-• Add donation
-• View donation history
-• Filter by member or month
+• Add donation records
+• Filter donation history
+• Track member contributions
 
----
+🆘 Help Request Management
 
-## 🤝 Fund Distribution
+Members can review assistance requests submitted by the public.
 
-Track when charity funds are used.
-
-Fields include:
-
-• Recipient Name
-• Amount
-• Purpose
-• Date
-• Notes
-
----
-
-## 🆘 Help Request Management
-
-Members can review incoming help requests.
-
-Status options:
+Request statuses include:
 
 • New
 • Under Review
 • Approved
 • Rejected
 
----
-
-# 🛠 Tech Stack
-
-### Frontend
+🛠 Tech Stack
+Frontend
 
 React
 Vite
@@ -182,7 +167,7 @@ Tailwind CSS
 Axios
 React Router
 
-### Backend
+Backend
 
 Node.js
 Express.js
@@ -191,70 +176,27 @@ JWT Authentication
 Multer
 Cloudinary
 
-### Deployment
-
-Frontend → Vercel
-Backend → Render
-Database → MongoDB Atlas
-Repository → GitHub
-
----
-
-# ⚙ Installation Guide
-
-## Clone Client Repository
-
-```bash
-git clone https://github.com/yourusername/badaruddinwelfare-client.git
-```
-
-## Clone Server Repository
-
-```bash
-git clone https://github.com/yourusername/badaruddinwelfare-server.git
-```
-
----
-
-# 📦 Install Dependencies
-
-### Client
-
-```bash
+⚙ Installation Guide
+Clone Client
+git clone https://github.com/najmulcodes/badaruddinwelfare-client.git
+Clone Server
+git clone https://github.com/najmulcodes/badaruddinwelfare-server.git
+📦 Install Dependencies
+Client
 cd badaruddinwelfare-client
 npm install
-```
-
-### Server
-
-```bash
+Server
 cd badaruddinwelfare-server
 npm install
-```
-
----
-
-# ▶ Run Development Server
-
-### Backend
-
-```bash
+▶ Run Development Server
+Backend
 npm run dev
-```
-
-### Frontend
-
-```bash
+Frontend
 npm run dev
-```
+🔐 Environment Variables
 
----
+Create .env file inside server folder
 
-# 🔐 Environment Variables
-
-Create `.env` file inside **server** directory.
-
-```
 PORT=5000
 
 MONGO_URI=your_mongodb_connection
@@ -264,83 +206,42 @@ JWT_SECRET=your_secret_key
 CLOUDINARY_CLOUD_NAME=xxxx
 CLOUDINARY_API_KEY=xxxx
 CLOUDINARY_API_SECRET=xxxx
-```
+🚀 Deployment
 
----
+Frontend → Vercel
+Backend → Render
+Database → MongoDB Atlas
 
-# 🚀 Deployment
-
-### Frontend Deployment
-
-https://vercel.com
-
-### Backend Deployment
-
-https://render.com
-
-### Database
-
-https://mongodb.com/atlas
-
----
-
-# 🔗 GitHub Repositories
-
-### Client
-
-```
-git remote add origin https://github.com/yourusername/badaruddinwelfare-client.git
-```
-
-### Server
-
-```
-git remote add origin https://github.com/yourusername/badaruddinwelfare-server.git
-```
-
----
-
-# 📈 Future Improvements
+📈 Future Improvements
 
 Possible future upgrades:
 
 • Online donation gateway
-• Mobile app version
 • SMS notifications
-• Multi-language support
+• Multi-language support (Bangla + English)
+• Mobile application
 • Analytics dashboard
 
----
-
-# 👨‍💻 Developer
+👨‍💻 Developer
 
 Developed by
 
-**Najmul Hasan**
+Najmul Hasan
 
 Full Stack Developer
 
 GitHub
-https://github.com/Shariarx6T9
+https://github.com/najmulcodes
 
 Email
-[najmulhasanshahin@gmail.com](mailto:najmulhasanshahin@gmail.com)
+najmulhasanshahin@gmail.com
 
----
-
-# 📜 License
+📜 License
 
 This project was created for
-**Badar Uddin Bepari Welfare Organization**
+
+Badar Uddin Bepari Welfare Organization
 
 All rights reserved.
 
----
-
-<p align="center">
-⭐ If you like this project, consider giving it a star on GitHub.
-</p>
-
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:0ea5a4&height=120&section=footer"/>
-</p>
+<p align="center"> ⭐ If you like this project, consider giving it a star on GitHub. </p> <p align="center"> <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:0ea5a4&height=120&section=footer"/> </p>

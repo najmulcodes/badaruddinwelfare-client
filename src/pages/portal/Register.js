@@ -29,13 +29,13 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.fatherName || !form.email || !form.phone || !form.password)
-      return toast.error("সব তথ্য পূরণ করুন");
+      return toast.error("সব তথ্য দিন");
     if (form.password !== form.confirm)
       return toast.error("পাসওয়ার্ড মিলছে না");
     if (form.password.length < 6)
       return toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে");
     if (!photo)
-      return toast.error("প্রোফাইল ছবি আপলোড করুন");
+      return toast.error("প্রোফাইল ছবি দিন");
 
     setLoading(true);
     try {
@@ -51,12 +51,12 @@ export default function Register() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("নিবন্ধন সফল! অ্যাডমিন অনুমোদনের পর লগইন করতে পারবেন।");
+      toast.success("নিবন্ধন হয়েছে। অ্যাডমিন অনুমোদনের পর লগইন করতে পারবেন।");
       navigate("/login");
     } catch (err) {
       const msg = err.response?.data?.message || "নিবন্ধনে সমস্যা হয়েছে";
       if (msg.includes("ইমেইল") || msg.includes("email") || msg.includes("already")) {
-        toast.error("এই ইমেইল দিয়ে আগেই নিবন্ধন হয়েছে। অন্য ইমেইল ব্যবহার করুন।");
+        toast.error("এই ইমেইল আগে ব্যবহার হয়েছে। অন্য ইমেইল দিন।");
       } else {
         toast.error(msg);
       }
@@ -75,7 +75,7 @@ export default function Register() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Photo upload */}
+          
           <div className="flex justify-center mb-2">
             <label className="cursor-pointer group">
               <div className="w-24 h-24 rounded-full border-4 border-dashed border-emerald-300 group-hover:border-emerald-500 overflow-hidden flex items-center justify-center bg-emerald-50 transition">
@@ -92,10 +92,9 @@ export default function Register() {
             </label>
           </div>
 
-          {/* Name row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">পূর্ণ নাম *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">নাম *</label>
               <div className="relative">
                 <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input name="name" value={form.name} onChange={handleChange} placeholder="আপনার নাম"
@@ -103,16 +102,15 @@ export default function Register() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">পিতার নাম *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">বাবার নাম *</label>
               <div className="relative">
                 <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input name="fatherName" value={form.fatherName} onChange={handleChange} placeholder="পিতার নাম"
+                <input name="fatherName" value={form.fatherName} onChange={handleChange} placeholder="বাবার নাম"
                   className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
               </div>
             </div>
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">ইমেইল *</label>
             <div className="relative">
@@ -122,9 +120,8 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Phone */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">মোবাইল নম্বর *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">হোয়াটসঅ্যাপ নম্বর *</label>
             <div className="relative">
               <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="01XXXXXXXXX"
@@ -132,7 +129,6 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Password row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">পাসওয়ার্ড *</label>
@@ -157,8 +153,9 @@ export default function Register() {
                 </button>
               </div>
             </div>
+
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">নিশ্চিত করুন *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">আবার লিখুন *</label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -201,7 +198,9 @@ export default function Register() {
 
         <p className="text-center text-sm text-gray-500 mt-5">
           আগেই অ্যাকাউন্ট আছে?{" "}
-          <Link to="/login" className="text-emerald-600 font-semibold hover:underline">লগইন করুন</Link>
+          <Link to="/login" className="text-emerald-600 font-semibold hover:underline">
+            লগইন করুন
+          </Link>
         </p>
       </div>
     </div>
