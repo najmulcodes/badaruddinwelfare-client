@@ -244,4 +244,12 @@ Badar Uddin Bepari Welfare Organization
 
 All rights reserved.
 
-<p align="center"> ⭐ If you like this project, consider giving it a star on GitHub. </p> <p align="center"> <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:0ea5a4&height=120&section=footer"/> </p>
+---
+
+<p align="center">
+⭐ If you like this project, consider giving it a star on GitHub.
+</p>
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:0ea5a4&height=120&section=footer"/>
+</p>
