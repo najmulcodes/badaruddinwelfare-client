@@ -2,20 +2,13 @@ import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { PageLoader } from "../../components/LoadingSpinner";
 import toast from "react-hot-toast";
-import { UserPlus, UserX, UserCheck, Camera, ShieldCheck, LogOut } from "lucide-react";
+import { UserPlus, UserX, UserCheck, Camera, ShieldCheck } from "lucide-react";
 import memberLogo from "../../assets/member_logo.jpeg";
 import { useAuth } from "../../context/AuthContext";
 
 // ── Must match SUPER_ADMIN in routes/auth.js exactly ──
 const SUPER_ADMIN = "admin@shariar.com";
 
-/**
- * getRoleMeta – returns display label and Tailwind classes for any member object.
- *
- * role === "superAdmin"  OR  email === SUPER_ADMIN  →  Creator  (purple)
- * role === "admin"                                   →  Admin    (yellow)
- * otherwise                                          →  Member   (emerald)
- */
 function getRoleMeta(member) {
   const isSA = member?.role === "superAdmin" || member?.email === SUPER_ADMIN;
   if (isSA)
@@ -26,7 +19,7 @@ function getRoleMeta(member) {
 }
 
 export default function AdminPanel() {
-  const { logout, isSuperAdmin: currentUserIsSuperAdmin } = useAuth();
+  const { isSuperAdmin: currentUserIsSuperAdmin } = useAuth();
 
   const [members, setMembers]   = useState([]);
   const [pending, setPending]   = useState([]);
@@ -102,13 +95,6 @@ export default function AdminPanel() {
     }
   };
 
-  const handleLogout = () => {
-    if (window.confirm("লগআউট করবেন?")) {
-      logout();
-      toast.success("লগআউট সফল হয়েছে");
-    }
-  };
-
   if (loading) return <PageLoader />;
 
   return (
@@ -125,12 +111,6 @@ export default function AdminPanel() {
             className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
           >
             <UserPlus size={18} /> নতুন সদস্য যোগ
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition"
-          >
-            <LogOut size={18} /> লগআউট
           </button>
         </div>
       </div>
@@ -177,7 +157,6 @@ export default function AdminPanel() {
               </div>
             ))}
 
-            {/* Role selector – superAdmin option shown only to the current superAdmin */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">ভূমিকা</label>
               <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}
@@ -234,7 +213,6 @@ export default function AdminPanel() {
                   return (
                     <tr key={m._id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
-                        {/* Photo + name + role badge stacked under photo */}
                         <div className="flex items-center gap-3">
                           <div className="flex flex-col items-center gap-1">
                             <img
@@ -243,7 +221,6 @@ export default function AdminPanel() {
                               className="w-9 h-9 rounded-full object-cover border border-gray-200"
                               onError={(e) => { e.target.src = memberLogo; }}
                             />
-                            {/* Badge shown under the photo */}
                             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold leading-tight ${roleMeta.cls}`}>
                               {roleMeta.label}
                             </span>
