@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 export default function NotFound() {
-  const [count, setCount] = useState(10);
+  const [count, setCount] = useState(20);
 
   // Auto-redirect countdown
   useEffect(() => {
