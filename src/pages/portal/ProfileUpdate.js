@@ -60,9 +60,8 @@ export default function ProfileUpdate() {
 
       const updatedUser = { ...user, ...data };
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      window.location.reload();
-
       toast.success("তথ্য আপডেট হয়েছে");
+      window.location.reload();
     } catch (err) {
       toast.error(err.response?.data?.message || "আপডেট করতে সমস্যা হয়েছে");
     } finally {
@@ -73,25 +72,25 @@ export default function ProfileUpdate() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-gray-800">প্রোফাইল বদলান</h1>
-        <p className="text-gray-500 text-sm mt-1">আপনার তথ্য আর ছবি বদলাতে পারেন</p>
+        <h1 className="text-2xl font-extrabold text-gray-800 dark:text-gray-100">প্রোফাইল বদলান</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">আপনার তথ্য আর ছবি বদলাতে পারেন</p>
       </div>
 
       <div className="max-w-xl">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-md p-6 sm:p-8 space-y-5">
-          <div className="flex flex-col items-center pb-5 border-b">
+        <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl bg-white p-6 shadow-md dark:bg-gray-800 sm:p-8">
+          <div className="flex flex-col items-center border-b border-gray-200 pb-5 dark:border-gray-700">
             <div className="relative mb-2">
               <img
                 src={photoPreview || user?.image || memberLogo}
                 alt="প্রোফাইল"
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-emerald-300 shadow"
+                className="h-24 w-24 rounded-full border-4 border-emerald-300 object-cover shadow sm:h-28 sm:w-28"
                 onError={(e) => {
                   e.target.src = memberLogo;
                 }}
               />
               <label
                 htmlFor="profile-photo"
-                className="absolute bottom-0 right-0 bg-emerald-600 text-white rounded-full p-2 cursor-pointer hover:bg-emerald-700 transition shadow-md"
+                className="absolute bottom-0 right-0 cursor-pointer rounded-full bg-emerald-600 p-2 text-white shadow-md transition hover:bg-emerald-700"
               >
                 <Camera size={16} />
               </label>
@@ -103,9 +102,9 @@ export default function ProfileUpdate() {
                 className="hidden"
               />
             </div>
-            <p className="text-xs text-gray-400 text-center">
+            <p className="text-center text-xs text-gray-400 dark:text-gray-500">
               {photoFile ? (
-                <span className="text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+                <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300">
                   নতুন ছবি নেওয়া হয়েছে
                 </span>
               ) : (
@@ -115,7 +114,7 @@ export default function ProfileUpdate() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
               পূর্ণ নাম <span className="text-red-500">*</span>
             </label>
             <input
@@ -123,13 +122,13 @@ export default function ProfileUpdate() {
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
               বাবার নাম <span className="text-red-500">*</span>
             </label>
             <input
@@ -138,13 +137,13 @@ export default function ProfileUpdate() {
               value={form.fatherName}
               onChange={handleChange}
               placeholder="আপনার বাবার নাম"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
               ইমেইল <span className="text-red-500">*</span>
             </label>
             <input
@@ -152,13 +151,13 @@ export default function ProfileUpdate() {
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
               ফোন / WhatsApp নম্বর <span className="text-red-500">*</span>
             </label>
             <input
@@ -167,18 +166,18 @@ export default function ProfileUpdate() {
               value={form.phone}
               onChange={handleChange}
               placeholder="01XXXXXXXXX"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               required
             />
           </div>
 
-          <div className="border-t pt-4">
-            <p className="text-xs text-gray-400 mb-3">
+          <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
+            <p className="mb-3 text-xs text-gray-400 dark:text-gray-500">
               পাসওয়ার্ড বদলাতে চাইলে নিচে লিখুন, না চাইলে ফাঁকা রাখুন
             </p>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
                   নতুন পাসওয়ার্ড
                 </label>
                 <input
@@ -187,11 +186,11 @@ export default function ProfileUpdate() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="কমপক্ষে ৬ অক্ষর"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
                   পাসওয়ার্ড আবার লিখুন
                 </label>
                 <input
@@ -200,14 +199,14 @@ export default function ProfileUpdate() {
                   value={form.confirmPassword}
                   onChange={handleChange}
                   placeholder="পাসওয়ার্ড আবার লিখুন"
-                  className={`w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                  className={`w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                     form.confirmPassword && form.password !== form.confirmPassword
                       ? "border-red-400 bg-red-50"
-                      : "border-gray-300"
-                  }`}
+                      : "border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+                  } dark:text-gray-100`}
                 />
                 {form.confirmPassword && form.password !== form.confirmPassword && (
-                  <p className="text-xs text-red-500 mt-1">পাসওয়ার্ড মিলছে না</p>
+                  <p className="mt-1 text-xs text-red-500">পাসওয়ার্ড মিলছে না</p>
                 )}
               </div>
             </div>
@@ -216,10 +215,10 @@ export default function ProfileUpdate() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 font-bold text-white rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-lg py-3 font-bold text-white transition disabled:opacity-50"
             style={{ background: "linear-gradient(135deg, #065f46, #10b981)" }}
           >
-            {loading ? "সংরক্ষণ হচ্ছে..." : (<><Save size={18} /> প্রোফাইল সংরক্ষণ করুন</>)}
+            {loading ? "সংরক্ষণ হচ্ছে..." : <><Save size={18} /> প্রোফাইল সংরক্ষণ করুন</>}
           </button>
         </form>
       </div>

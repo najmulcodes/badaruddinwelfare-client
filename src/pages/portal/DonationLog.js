@@ -76,16 +76,16 @@ function MemberDonationForm({ onSuccess }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-xl shadow-md p-5 sm:p-6 mb-6 border-l-4 border-emerald-500"
+      className="mb-6 rounded-xl border-l-4 border-emerald-500 bg-white p-5 shadow-md dark:bg-gray-800 sm:p-6"
     >
-      <h2 className="font-bold text-gray-800 text-lg mb-1">অনুদানের তথ্য দিন</h2>
-      <p className="text-xs text-gray-400 mb-5">
+      <h2 className="mb-1 text-lg font-bold text-gray-800 dark:text-gray-100">অনুদানের তথ্য দিন</h2>
+      <p className="mb-5 text-xs text-gray-400 dark:text-gray-500">
         অনুদানের তথ্য পাঠালে অ্যাডমিন দেখে স্ট্যাটাস দেবেন।
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
             পরিমাণ (৳) <span className="text-red-500">*</span>
           </label>
           <input
@@ -94,13 +94,13 @@ function MemberDonationForm({ onSuccess }) {
             onChange={(e) => setForm({ ...form, amount: e.target.value })}
             min="1"
             placeholder="যেমন: 500"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
             কীভাবে পাঠিয়েছেন <span className="text-red-500">*</span>
           </label>
           <select
@@ -114,7 +114,7 @@ function MemberDonationForm({ onSuccess }) {
                 personName: "",
               })
             }
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
           >
             <option value="bKash">bKash</option>
             <option value="Bank">ব্যাংক</option>
@@ -124,7 +124,7 @@ function MemberDonationForm({ onSuccess }) {
 
         {form.method === "Bank" && (
           <div className="sm:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
               ব্যাংকের নাম <span className="text-red-500">*</span>
             </label>
             <input
@@ -132,14 +132,14 @@ function MemberDonationForm({ onSuccess }) {
               value={form.bankName}
               onChange={(e) => setForm({ ...form, bankName: e.target.value })}
               placeholder="যেমন: Dutch Bangla Bank"
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
         )}
 
         {form.method === "bKash" && (
           <div className="sm:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
               bKash নম্বর <span className="text-red-500">*</span>
             </label>
             <input
@@ -147,14 +147,14 @@ function MemberDonationForm({ onSuccess }) {
               value={form.bkashNumber}
               onChange={(e) => setForm({ ...form, bkashNumber: e.target.value })}
               placeholder="01XXXXXXXXX"
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
         )}
 
         {form.method === "Person" && (
           <div className="sm:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
               যাকে দিয়েছেন <span className="text-red-500">*</span>
             </label>
             <input
@@ -162,17 +162,17 @@ function MemberDonationForm({ onSuccess }) {
               value={form.personName}
               onChange={(e) => setForm({ ...form, personName: e.target.value })}
               placeholder="ব্যক্তির নাম"
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">মাস</label>
+          <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">মাস</label>
           <select
             value={form.month}
             onChange={(e) => setForm({ ...form, month: Number(e.target.value) })}
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
           >
             {MONTHS.map((month, index) => (
               <option key={month} value={index + 1}>
@@ -183,34 +183,36 @@ function MemberDonationForm({ onSuccess }) {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">বছর</label>
+          <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">বছর</label>
           <input
             type="number"
             value={form.year}
             onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
             min={MIN_YEAR}
             max="2030"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
           />
         </div>
 
         <div className="sm:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">কিছু লিখতে চাইলে</label>
+          <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+            কিছু লিখতে চাইলে
+          </label>
           <input
             type="text"
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
             placeholder="অতিরিক্ত কিছু লিখতে পারেন"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
           />
         </div>
       </div>
 
-      <div className="flex gap-3 mt-5">
+      <div className="mt-5 flex gap-3">
         <button
           type="submit"
           disabled={loading}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-2 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50 sm:w-auto"
         >
           <Send size={16} /> {loading ? "পাঠানো হচ্ছে..." : "তথ্য পাঠান"}
         </button>
@@ -323,16 +325,16 @@ export default function DonationLog() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-800">অনুদানের তালিকা</h1>
-          <p className="text-gray-500 text-sm">সদস্যদের মাসভিত্তিক অনুদানের তালিকা</p>
+          <h1 className="text-2xl font-extrabold text-gray-800 dark:text-gray-100">অনুদানের তালিকা</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">সদস্যদের মাসভিত্তিক অনুদানের তালিকা</p>
         </div>
-        <div className="flex gap-2 flex-wrap w-full sm:w-auto">
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto">
           {!isAdmin && (
             <button
               onClick={() => setShowMemberForm(!showMemberForm)}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white transition hover:bg-emerald-700 sm:w-auto"
             >
               <Send size={18} /> অনুদানের তথ্য দিন
             </button>
@@ -340,7 +342,7 @@ export default function DonationLog() {
           {isAdmin && (
             <button
               onClick={() => setShowForm(!showForm)}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white transition hover:bg-emerald-700 sm:w-auto"
             >
               <Plus size={18} /> অনুদান যোগ করুন
             </button>
@@ -360,13 +362,13 @@ export default function DonationLog() {
       {showForm && isAdmin && (
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-xl shadow-md p-5 sm:p-6 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+          className="mb-6 grid grid-cols-1 gap-4 rounded-xl bg-white p-5 shadow-md dark:bg-gray-800 sm:grid-cols-2 sm:p-6"
         >
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">সদস্য *</label>
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">সদস্য *</label>
             <select
               onChange={handleMemberSelect}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               required
             >
               <option value="">সদস্য বেছে নিন</option>
@@ -379,23 +381,23 @@ export default function DonationLog() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">পরিমাণ (৳) *</label>
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">পরিমাণ (৳) *</label>
             <input
               type="number"
               value={form.amount}
               onChange={(e) => setForm({ ...form, amount: e.target.value })}
               min="1"
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">মাস *</label>
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">মাস *</label>
             <select
               value={form.month}
               onChange={(e) => setForm({ ...form, month: Number(e.target.value) })}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             >
               {MONTHS.map((month, index) => (
                 <option key={month} value={index + 1}>
@@ -406,39 +408,39 @@ export default function DonationLog() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">বছর *</label>
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">বছর *</label>
             <input
               type="number"
               value={form.year}
               onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
               min={MIN_YEAR}
               max="2030"
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">নোট</label>
+            <label className="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-300">নোট</label>
             <input
               type="text"
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
               placeholder="ইচ্ছা হলে লিখুন"
             />
           </div>
 
-          <div className="sm:col-span-2 flex flex-col sm:flex-row gap-3">
+          <div className="sm:col-span-2 flex flex-col gap-3 sm:flex-row">
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition"
+              className="w-full rounded-lg bg-emerald-600 px-6 py-2 font-semibold text-white transition hover:bg-emerald-700 sm:w-auto"
             >
               সংরক্ষণ করুন
             </button>
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="w-full sm:w-auto px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition"
+              className="w-full rounded-lg bg-gray-200 px-6 py-2 font-semibold text-gray-700 transition hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 sm:w-auto"
             >
               বাতিল
             </button>
@@ -446,12 +448,12 @@ export default function DonationLog() {
         </form>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-4 flex gap-3 flex-wrap items-center">
-        <Filter size={16} className="text-gray-400 shrink-0" />
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+        <Filter size={16} className="shrink-0 text-gray-400 dark:text-gray-500" />
         <select
           value={filter.month}
           onChange={(e) => setFilter({ ...filter, month: e.target.value })}
-          className="w-full sm:w-auto border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 sm:w-auto"
         >
           <option value="">সব মাস</option>
           {MONTHS.map((month, index) => (
@@ -463,7 +465,7 @@ export default function DonationLog() {
         <select
           value={filter.year}
           onChange={(e) => setFilter({ ...filter, year: e.target.value })}
-          className="w-full sm:w-auto border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 sm:w-auto"
         >
           <option value="">সব বছর</option>
           {filterYears.map((year) => (
@@ -476,7 +478,7 @@ export default function DonationLog() {
           <select
             value={filter.status}
             onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-            className="w-full sm:w-auto border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 sm:w-auto"
           >
             <option value="">সব স্ট্যাটাস</option>
             <option value="pending">Pending</option>
@@ -484,33 +486,35 @@ export default function DonationLog() {
             <option value="rejected">Rejected</option>
           </select>
         )}
-        <span className="w-full sm:w-auto sm:ml-auto text-sm font-bold text-emerald-600">
+        <span className="w-full text-sm font-bold text-emerald-600 dark:text-emerald-400 sm:ml-auto sm:w-auto">
           মোট: ৳{total.toLocaleString("en-IN")}
         </span>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="overflow-hidden rounded-xl bg-white shadow-md dark:bg-gray-800">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[760px]">
-            <thead className="bg-gray-50">
+          <table className="min-w-[760px] w-full text-sm">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">সদস্যের নাম</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">মাস / বছর</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">পরিমাণ</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">স্ট্যাটাস</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">নোট</th>
-                {isAdmin && <th className="text-left px-4 py-3 font-semibold text-gray-600">অ্যাকশন</th>}
+                <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">সদস্যের নাম</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">মাস / বছর</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">পরিমাণ</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">স্ট্যাটাস</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">নোট</th>
+                {isAdmin && (
+                  <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">অ্যাকশন</th>
+                )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {donations.length ? (
                 donations.map((donation) => (
-                  <tr key={donation._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium text-gray-700">{donation.memberName}</td>
-                    <td className="px-4 py-3 text-gray-500">
+                  <tr key={donation._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+                    <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-200">{donation.memberName}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
                       {MONTHS[donation.month - 1]} {donation.year}
                     </td>
-                    <td className="px-4 py-3 font-bold text-emerald-600">
+                    <td className="px-4 py-3 font-bold text-emerald-600 dark:text-emerald-400">
                       ৳{donation.amount.toLocaleString("en-IN")}
                     </td>
                     <td className="px-4 py-3">
@@ -522,7 +526,7 @@ export default function DonationLog() {
                         {donation.status || "pending"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{donation.notes || "—"}</td>
+                    <td className="px-4 py-3 text-xs text-gray-400 dark:text-gray-500">{donation.notes || "—"}</td>
                     {isAdmin && (
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -530,14 +534,14 @@ export default function DonationLog() {
                             <>
                               <button
                                 onClick={() => handleStatusUpdate(donation._id, "approve")}
-                                className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition"
+                                className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
                               >
                                 <Check size={14} />
                                 Approve
                               </button>
                               <button
                                 onClick={() => handleStatusUpdate(donation._id, "reject")}
-                                className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition"
+                                className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
                               >
                                 <X size={14} />
                                 Reject
@@ -546,7 +550,7 @@ export default function DonationLog() {
                           )}
                           <button
                             onClick={() => handleDelete(donation._id)}
-                            className="text-red-500 hover:text-red-700 transition"
+                            className="text-red-500 transition hover:text-red-700"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -557,7 +561,7 @@ export default function DonationLog() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={isAdmin ? 6 : 5} className="text-center py-10 text-gray-400">
+                  <td colSpan={isAdmin ? 6 : 5} className="py-10 text-center text-gray-400 dark:text-gray-500">
                     কোনো অনুদান পাওয়া যায়নি
                   </td>
                 </tr>

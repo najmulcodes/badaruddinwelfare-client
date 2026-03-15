@@ -51,7 +51,7 @@ export default function SpendingLog() {
     <div>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-800">তহবিল ব্যয় লগ</h1>
+          <h1 className="text-2xl font-extrabold text-gray-800">তহবিল ব্যয়ের তালিকা</h1>
           <p className="text-gray-500 text-sm">যাদের সহায়তা করা হয়েছে তার তালিকা</p>
         </div>
         {isAdmin && (
