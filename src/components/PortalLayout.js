@@ -8,7 +8,6 @@ import {
   HelpCircle,
   MessageSquare,
   Users,
-  LogOut,
   Menu,
   Newspaper,
   UserCircle,
@@ -126,15 +125,6 @@ export default function PortalLayout({ children }) {
           </NavLink>
         ))}
       </nav>
-
-      <div className="border-t border-gray-200 p-4 dark:border-gray-800">
-        <button
-          onClick={handleLogout}
-          className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:hover:bg-red-950/40"
-        >
-          <LogOut size={16} /> লগআউট
-        </button>
-      </div>
     </aside>
   );
 
