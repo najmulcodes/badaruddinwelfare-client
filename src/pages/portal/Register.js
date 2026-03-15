@@ -8,14 +8,19 @@ import RegisterOTPStep from "./RegisterOTP";
 
 export default function Register() {
   const [form, setForm] = useState({
-    name: "", fatherName: "", email: "", phone: "", password: "", confirm: "",
+    name: "",
+    fatherName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirm: "",
   });
-  const [photo, setPhoto]           = useState(null);
-  const [preview, setPreview]       = useState(null);
-  const [loading, setLoading]       = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm]   = useState(false);
-  const [showOTP, setShowOTP]       = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showOTP, setShowOTP] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -33,14 +38,18 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.fatherName || !form.email || !form.phone || !form.password)
+    if (!form.name || !form.fatherName || !form.email || !form.phone || !form.password) {
       return toast.error("সব তথ্য দিন");
-    if (form.password !== form.confirm)
+    }
+    if (form.password !== form.confirm) {
       return toast.error("পাসওয়ার্ড মিলছে না");
-    if (form.password.length < 6)
+    }
+    if (form.password.length < 6) {
       return toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে");
-    if (!photo)
+    }
+    if (!photo) {
       return toast.error("প্রোফাইল ছবি দিন");
+    }
 
     setLoading(true);
     try {
@@ -62,7 +71,6 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-lg">
-
         {/* Header */}
         <div className="text-center mb-7">
           <img src={logo} alt="Logo" className="w-16 h-16 object-contain mx-auto mb-3" />
@@ -81,20 +89,18 @@ export default function Register() {
           <RegisterOTPStep
             email={form.email}
             formData={{
-              name:       form.name,
+              name: form.name,
               fatherName: form.fatherName,
-              email:      form.email,
-              phone:      form.phone,
-              password:   form.password,
+              email: form.email,
+              phone: form.phone,
+              password: form.password,
             }}
             photoFile={photo}
             onSuccess={() => navigate("/login")}
             onBack={() => setShowOTP(false)}
           />
         ) : (
-          /* Registration Form */
           <form onSubmit={handleSubmit} className="space-y-4">
-
             {/* Photo upload */}
             <div className="flex justify-center mb-2">
               <label className="cursor-pointer group">
@@ -129,7 +135,9 @@ export default function Register() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">বাবার নাম *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  বাবার নাম *
+                </label>
                 <div className="relative">
                   <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
@@ -163,7 +171,9 @@ export default function Register() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">হোয়াটসঅ্যাপ নম্বর *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                হোয়াটসঅ্যাপ নম্বর *
+              </label>
               <div className="relative">
                 <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -181,7 +191,9 @@ export default function Register() {
             {/* Password + Confirm */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  পাসওয়ার্ড *
+                </label>
                 <div className="relative">
                   <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
@@ -205,7 +217,9 @@ export default function Register() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">আবার লিখুন *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  আবার লিখুন *
+                </label>
                 <div className="relative">
                   <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
@@ -257,12 +271,23 @@ export default function Register() {
 
         {/* Footer link */}
         {!showOTP && (
-          <p className="text-center text-sm text-gray-500 mt-5">
-            আগেই অ্যাকাউন্ট আছে?{" "}
-            <Link to="/login" className="text-emerald-600 font-semibold hover:underline">
-              লগইন করুন
-            </Link>
-          </p>
+          <div className="mt-5 space-y-2">
+            <p className="text-center text-sm text-gray-500">
+              আগেই অ্যাকাউন্ট আছে?{" "}
+              <Link to="/login" className="text-emerald-600 font-semibold hover:underline">
+                লগইন করুন
+              </Link>
+            </p>
+
+            <p className="text-center text-sm mt-2">
+              <Link
+                to="/forgot-password"
+                className="text-emerald-600 font-medium hover:underline"
+              >
+                পাসওয়ার্ড ভুলে গেছেন?
+              </Link>
+            </p>
+          </div>
         )}
       </div>
     </div>
