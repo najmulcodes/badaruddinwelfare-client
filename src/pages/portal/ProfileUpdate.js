@@ -62,7 +62,7 @@ export default function ProfileUpdate() {
       localStorage.setItem("user", JSON.stringify(updatedUser));
       window.location.reload();
 
-      toast.success("প্রোফাইল বদলে গেছে!");
+      toast.success("তথ্য আপডেট হয়েছে");
     } catch (err) {
       toast.error(err.response?.data?.message || "আপডেট করতে সমস্যা হয়েছে");
     } finally {
@@ -78,13 +78,13 @@ export default function ProfileUpdate() {
       </div>
 
       <div className="max-w-xl">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-md p-8 space-y-5">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-md p-6 sm:p-8 space-y-5">
           <div className="flex flex-col items-center pb-5 border-b">
             <div className="relative mb-2">
               <img
                 src={photoPreview || user?.image || memberLogo}
                 alt="প্রোফাইল"
-                className="w-28 h-28 rounded-full object-cover border-4 border-emerald-300 shadow"
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-emerald-300 shadow"
                 onError={(e) => {
                   e.target.src = memberLogo;
                 }}
@@ -103,7 +103,7 @@ export default function ProfileUpdate() {
                 className="hidden"
               />
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-400 text-center">
               {photoFile ? (
                 <span className="text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
                   নতুন ছবি নেওয়া হয়েছে

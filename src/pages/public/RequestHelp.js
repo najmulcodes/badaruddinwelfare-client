@@ -35,7 +35,7 @@ export default function RequestHelp() {
       });
 
       setSubmitted(true);
-      toast.success("আবেদন পাঠানো হয়েছে!");
+      toast.success("আবেদন পাঠানো হয়েছে");
     } catch (error) {
       const msg = error.response?.data?.message;
       if (!msg || msg.includes("সার্ভার") || msg.includes("সংযোগ")) {
@@ -51,13 +51,13 @@ export default function RequestHelp() {
   if (submitted) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-lg p-10 text-center max-w-md w-full">
+        <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-10 text-center max-w-md w-full">
           <div className="text-emerald-500 flex justify-center mb-4">
             <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center">
               <Send size={36} />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">আবেদন পাঠানো হয়েছে!</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-3">আবেদন পাঠানো হয়েছে</h2>
           <p className="text-gray-500 mb-6">
             আপনার আবেদন আমরা পেয়েছি। সময় হলে আপনার সঙ্গে যোগাযোগ করা হবে।
           </p>
@@ -67,7 +67,7 @@ export default function RequestHelp() {
               setForm({ fullName: "", phone: "", address: "", description: "" });
               setAttachment(null);
             }}
-            className="px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition"
+            className="w-full sm:w-auto px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition"
           >
             আবার আবেদন করুন
           </button>
@@ -79,7 +79,7 @@ export default function RequestHelp() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-3">সাহায্যের আবেদন</h1>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-3">সাহায্যের আবেদন</h1>
         <p className="text-gray-500">
           আপনার সমস্যাটা লিখুন। আমরা যতটা পারি সাহায্য করার চেষ্টা করব।
         </p>
@@ -92,7 +92,7 @@ export default function RequestHelp() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-5">
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 space-y-5">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">
             পূর্ণ নাম <span className="text-red-500">*</span>
