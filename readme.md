@@ -140,7 +140,7 @@ Donation records updated
 # 🚀 Live Deployment
 
 ### 🌐 Frontend
-https://badaruddinwelfare-client.vercel.app
+https://badaruddinwelfareorg.vercel.app
 
 ### ⚙ Backend API
 https://badaruddinwelfare-server.onrender.com
