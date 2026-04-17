@@ -383,7 +383,7 @@ All rights reserved.
 ---
 
 <p align="center">
-⭐ If you like this project, consider giving it a star on GitHub.
+ If you like this project, consider giving it a star ⭐ on GitHub.
 </p>
 
 <p align="center">
